@@ -2,7 +2,7 @@
 
 ## Team members
 
-Pepijn de Veer, 
+Pepijn de Veer, Pedro Cristos Martinez
 
 ## Overview
 This project focuses on analyzing and visualizing flight information from a large dataset of flights departing New York City in 2023. It is divided into three main parts:
