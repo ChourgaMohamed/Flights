@@ -208,6 +208,3 @@ plt.yticks(fontsize=10)
 plt.subplots_adjust(left=0.3)  # Adjusts left margin
 
 plt.show()
-
-
-# test
