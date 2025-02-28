@@ -16,6 +16,7 @@ st.set_page_config(page_title="Airports Dashboard", layout="wide")
 def load_data():
     df = pd.read_csv("airports.csv")
     df["tz"] = df["tz"].fillna("Unknown").astype(str)
+    df["tzone"] = df["tzone"].fillna("Unknown").astype(str)
     return df
 
 
@@ -41,9 +42,25 @@ def get_global_map():
     return fig
 
 def get_us_map():
-    us_airports = df[df["tz"].str.contains("America")]
+    us_airports = df[df["tzone"].str.contains("America")]
     fig = px.scatter_geo(
         us_airports,
+        lat="lat",
+        lon="lon",
+        hover_name="name",
+        opacity=0.6
+    )
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=2, r=2, t=2, b=2)  # Reduce margins for a bigger map area
+    )
+    
+    return fig
+
+def get_non_us_map():
+    non_us_airports = df[~df["tzone"].str.contains("America", na=False)]
+    fig = px.scatter_geo(
+        non_us_airports,
         lat="lat",
         lon="lon",
         hover_name="name",
@@ -134,6 +151,7 @@ st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", [
     "Global Airports Map",
     "US Airports Map",
+    "Non-US Airports Map",
     "Flight Route (Single)",
     "Flight Route (Multiple)",
     "Distance Analysis",
@@ -156,6 +174,15 @@ elif page == "US Airports Map":
     st.header("US Airports Map")
     fig = get_us_map()
     st.plotly_chart(fig, use_container_width=True)
+
+# ---------------------------
+# Page: Non-US Airports Map
+# ---------------------------
+elif page == "Non-US Airports Map":
+    st.header("Non-US Airports Map")
+    fig = get_non_us_map()
+    st.plotly_chart(fig, use_container_width=True)
+
 
 # ---------------------------
 # Page: Flight Route (Single)
