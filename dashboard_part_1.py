@@ -30,10 +30,14 @@ def get_global_map():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="Airports Worldwide",
-        size_max=5,
         opacity=0.6
     )
+
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=2, r=2, t=2, b=2)  # Reduce margins for a bigger map area
+    )
+
     return fig
 
 def get_us_map():
@@ -43,10 +47,13 @@ def get_us_map():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="US Airports",
-        size_max=5,
         opacity=0.6
     )
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=2, r=2, t=2, b=2)  # Reduce margins for a bigger map area
+    )
+    
     return fig
 
 # ---------------------------
@@ -66,9 +73,13 @@ def get_flight_route_fig(faa_code):
         text="name",
         hover_name="name",
         title=f"Route from NYC to {faa_code}",
-        size_max=5,
         opacity=0.6
     )
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=20, r=20, t=20, b=20)  # Reduce margins for a bigger map area
+    )
+
     # Add a line connecting NYC and the target airport
     fig.add_trace(px.line_geo(plot_data, lat="lat", lon="lon").data[0])
     return fig
@@ -86,9 +97,12 @@ def get_multiple_routes_fig(faa_codes):
         text="name",
         hover_name="name",
         title="Routes from NYC to Selected Airports",
-        size_max=5,
         opacity=0.6
     )
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=20, r=20, t=20, b=20)  # Reduce margins for a bigger map area
+    )    
     # Add a line for each selected airport
     for faa in faa_codes:
         target_airport = df[df["faa"] == faa]
@@ -176,7 +190,7 @@ elif page == "Flight Route (Multiple)":
 elif page == "Distance Analysis":
     st.header("Distance Analysis from JFK")
     st.subheader("Histograms of Euclidean and Geodesic Distances")
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2)
     axes[0].hist(df["euclidean_dist"], bins=30, edgecolor="black")
     axes[0].set_xlabel("Euclidean Distance from JFK")
     axes[0].set_ylabel("Number of Airports")
@@ -194,7 +208,7 @@ elif page == "Time Zone Distribution":
     st.header("Time Zone Distribution of Airports")
     # Exclude "Unknown" time zones for clarity
     tz_counts = df[df["tz"] != "Unknown"]["tz"].value_counts().sort_values(ascending=True)
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots()
     ax.barh(tz_counts.index, tz_counts.values, color="royalblue")
     ax.set_xlabel("Number of Airports")
     ax.set_ylabel("Time Zone")
@@ -209,7 +223,7 @@ elif page == "Altitude Analysis":
     
     # Scatter plot: Altitude vs. Geodesic Distance
     st.subheader("Scatter Plot: Altitude vs. Geodesic Distance from JFK")
-    fig1, ax1 = plt.subplots(figsize=(10, 5))
+    fig1, ax1 = plt.subplots()
     sns.scatterplot(x="geodesic_dist", y="alt", data=df, alpha=0.5, color="red", ax=ax1)
     ax1.set_xlabel("Geodesic Distance from JFK (km)")
     ax1.set_ylabel("Altitude (m)")
@@ -219,7 +233,7 @@ elif page == "Altitude Analysis":
     # Bar chart: Top 10 Highest Airports
     st.subheader("Top 10 Highest Airports")
     top_highest = df.nlargest(10, "alt")
-    fig2, ax2 = plt.subplots(figsize=(12, 6))
+    fig2, ax2 = plt.subplots()
     ax2.barh(top_highest["name"], top_highest["alt"], color="darkgreen")
     ax2.set_xlabel("Altitude (m)", fontsize=12)
     ax2.set_ylabel("Airport Name", fontsize=12)
