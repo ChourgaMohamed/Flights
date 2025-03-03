@@ -1,3 +1,5 @@
+# PART 1
+
 import pandas as pd
 
 # Load the dataset
@@ -209,7 +211,13 @@ plt.subplots_adjust(left=0.3)  # Adjusts left margin
 
 plt.show()
 
-#part 3
+
+
+#PART 2 = CONNECT GITHUB
+
+
+
+#PART 3
 
 import numpy as np
 
