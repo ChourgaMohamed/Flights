@@ -12,6 +12,8 @@ This project focuses on analyzing and visualizing flight information from a larg
   Setting up a GitHub repository, managing version control, and continuously updating this README as the project evolves.
 - **Database Interaction and Advanced Analysis (Part 3):**  
   Connecting to a SQLite database (`flights_database.db`) containing detailed tables on airlines, flights, planes, and weather to perform complex queries and cross-referenced analysis.
+- **Data Wrangling (Part 4):**
+  Cleaning and optimizing data to perform more advanced cross-refecenced analysis, solving missing values and NaN values.
 
 ## Features
 - **Interactive Visualizations:**  
@@ -26,7 +28,19 @@ This project focuses on analyzing and visualizing flight information from a larg
   Leveraging SQL queries via sqlite3 to join multiple tables and extract insights from a comprehensive flights database.
 
 ## Requirements
+To run this script we use the following dependencies.
 - Python 3.x
 - [Pandas](https://pandas.pydata.org/)
 - [Plotly](https://plotly.com/python/)
 - SQLite3 (included with Python)
+
+To facilitate the use of this script, install the required dependencies from the `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
+You also need the following files in the same directory as the script:
+
+- **`airports.csv`**: Contains airport data (including location and timezone).
+- **`flights_database.db`**: SQLite database containing flight records.
