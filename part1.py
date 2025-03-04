@@ -1,4 +1,11 @@
 import pandas as pd
+import plotly.express as px
+import numpy as np
+from geopy.distance import geodesic
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sqlite3
 
 # Load the dataset
 df = pd.read_csv("airports.csv")
@@ -6,7 +13,6 @@ df = pd.read_csv("airports.csv")
 # Display the first few rows
 print(df.head())
 
-import plotly.express as px
 
 # Create an improved scatter_geo plot
 fig = px.scatter_geo(df, lat="lat", lon="lon",
@@ -26,7 +32,6 @@ us_airports = df[df["tz"].str.contains("America")]
 # Non-US airports (time zone does NOT contain 'America/')
 non_us_airports = df[~df["tz"].str.contains("America")]
 
-import plotly.express as px
 
 # Plot US airports only
 fig_us = px.scatter_geo(us_airports, lat="lat", lon="lon",
@@ -103,7 +108,6 @@ def plot_multiple_routes(faa_codes):
 # Example usage
 plot_multiple_routes(["LAX", "ORD", "MIA"])  # Replace with desired FAA codes
 
-import numpy as np
 
 # Get JFK coordinates
 jfk = df[df["faa"] == "JFK"].iloc[0]
@@ -117,7 +121,6 @@ print(df[["faa", "name", "euclidean_dist"]].head())
 
 
 
-from geopy.distance import geodesic
 
 # Function to compute geodesic distance
 def compute_geodesic(lat, lon):
@@ -126,7 +129,6 @@ def compute_geodesic(lat, lon):
 # Apply function to all airports
 df["geodesic_dist"] = df.apply(lambda row: compute_geodesic(row["lat"], row["lon"]), axis=1)
 
-import matplotlib.pyplot as plt
 
 # Create a figure with two subplots
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
@@ -156,7 +158,6 @@ time_zone_counts = df["tz"].value_counts()
 # Display the top time zones
 print(time_zone_counts.head(10))  # Show the 10 most common time zones
 
-import matplotlib.pyplot as plt
 
 # Remove NaN values before converting to string
 df["tz"] = df["tz"].fillna("Unknown").astype(str)  # Ensure NaNs are replaced before converting
@@ -175,9 +176,7 @@ plt.ylabel("Time Zone")
 plt.title("Distribution of Airports Across Time Zones")
 plt.show()
 
-#Extra part
 
-import seaborn as sns
 
 # Create scatter plot of altitude vs. geodesic distance
 plt.figure(figsize=(10, 5))
@@ -211,7 +210,6 @@ plt.show()
 
 #part 3
 
-import numpy as np
 
 # Function to calculate distance between two lat/lon points
 def haversine(lat1, lon1, lat2, lon2):
@@ -223,11 +221,9 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     return R * c
 
-import sqlite3
-import pandas as pd
 
 # Path to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
+db_path = "flights_database.db"
 
 # Establish connection
 conn = sqlite3.connect(db_path)
@@ -250,11 +246,8 @@ print(df)
 # Close the database connection
 conn.close()
 
-import sqlite3
-import pandas as pd
 
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 
@@ -274,11 +267,9 @@ print(df_nyc_airports)
 conn.close()
 
 
-import sqlite3
-import pandas as pd
+
 
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # Query only JFK, LGA, and EWR airports
@@ -297,11 +288,8 @@ print(df_nyc_airports)
 # Close connection
 conn.close()
 
-import sqlite3
-import pandas as pd
 
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # Query flights departing from NYC airports
@@ -320,11 +308,7 @@ print(df_nyc_flights.head())
 # Close connection
 conn.close()
 
-import sqlite3
-import pandas as pd
-
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # Query to get the number of flights per destination
@@ -345,7 +329,6 @@ print(df_nyc_destinations.head(10))  # Show top 10 destinations
 # Close connection
 conn.close()
 
-import matplotlib.pyplot as plt
 
 # Plot the top 10 destinations
 plt.figure(figsize=(10, 6))
@@ -359,11 +342,6 @@ plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
 
 # Show the plot
 plt.show()
-
-import sqlite3
-import pandas as pd
-import plotly.express as px
-
 
 def plot_flight_destinations(db_path, origin, month, day):
     # Connect to database
@@ -393,11 +371,7 @@ def plot_flight_destinations(db_path, origin, month, day):
 
 
 # Example usage:
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 plot_flight_destinations(db_path, "JFK", 1, 1)  # Example: Flights from JFK on January 1st
-
-import sqlite3
-import pandas as pd
 
 def get_flight_stats(db_path, origin, month, day):
     # Connect to database
@@ -432,11 +406,8 @@ def get_flight_stats(db_path, origin, month, day):
         print(f"No flights found for {origin} on {month}/{day}.")
 
 # Example usage:
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 get_flight_stats(db_path, "JFK", 1, 1)  # Example: Flights from JFK on January 1st
 
-import sqlite3
-import pandas as pd
 
 def get_plane_type_counts(db_path, origin, dest):
     # Connect to database
@@ -469,12 +440,7 @@ def get_plane_type_counts(db_path, origin, dest):
     return plane_type_counts
 
 # Example usage:
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 get_plane_type_counts(db_path, "JFK", "LAX")  # Example: Flights from JFK to LAX
-
-import sqlite3
-import pandas as pd
-import matplotlib.pyplot as plt
 
 def plot_avg_dep_delay(db_path):
     # Connect to database
@@ -505,12 +471,9 @@ def plot_avg_dep_delay(db_path):
     plt.show()
 
 # usage:
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 plot_avg_dep_delay(db_path)
 
 # Write a function that takes as input a range of months and a destination and returns the amount of delayed flights to that destination.
-
-import sqlite3
 
 
 def count_delayed_flights(db_path, start_month, end_month, destination):
@@ -545,15 +508,11 @@ def count_delayed_flights(db_path, start_month, end_month, destination):
 
 
 # usage
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 count_delayed_flights(db_path, 1, 3, "LAX")  # Example: Count delayed flights to LAX from Jan to March
 
 # Write a function that takes a destination airport as input and returns the top 5
 # airplane manufacturers with planes departing to this destination. For this task,
 # you have to combine data from flights and planes
-
-import sqlite3
-import pandas as pd
 
 def get_top_manufacturers(db_path, destination):
     """
@@ -586,19 +545,13 @@ def get_top_manufacturers(db_path, destination):
     return df
 
 # Example usage
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 get_top_manufacturers(db_path, "LAX")  # Example: Flights to LAX
 
 # Investigate whether there is a relationship between the distance of a flight and
 # the arrival delay time.
 
-import sqlite3
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # SQL query to get distance and arrival delay
@@ -636,11 +589,7 @@ plt.show()
 # time over all flights of that model. Use this information to fill the column speed
 # in the table planes
 
-import sqlite3
-import pandas as pd
-
 # Connect to database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # SQL query to calculate average speed per plane model
@@ -665,11 +614,6 @@ conn.close()
 # The wind direction is given in weather in degrees. Compute for each airport
 # the direction the plane follows when flying there from New York.
 
-import sqlite3
-import pandas as pd
-import numpy as np
-
-
 # Function to calculate flight direction
 def calculate_flight_direction(dep_lat, dep_lon, arr_lat, arr_lon):
     delta_lon = np.radians(arr_lon - dep_lon)
@@ -683,7 +627,6 @@ def calculate_flight_direction(dep_lat, dep_lon, arr_lat, arr_lon):
 
 
 # Connect to database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # SQL Query to get flight details & wind direction
@@ -716,12 +659,7 @@ conn.close()
 # Write a function that computes the inner product between the flight direction
 # and the wind speed of a given flight
 
-import sqlite3
-import pandas as pd
-import numpy as np
-
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # Query flight direction and wind speed
@@ -748,11 +686,8 @@ print(df[["origin", "dest", "inner_product"]].head())
 
 # Is there a relation between the sign of this inner product and the air time?
 
-import sqlite3
-import pandas as pd
 
 # Connect to the database
-db_path = "/Users/laurensrobbe/Documents/GitHub/Flights/flights_database.db"
 conn = sqlite3.connect(db_path)
 
 # SQL Query to fetch necessary data
@@ -773,8 +708,6 @@ conn.close()
 # Print first few rows to check if data is retrieved
 print(df.head())
 
-import matplotlib.pyplot as plt
-import numpy as np
 
 # Ensure there is data
 if not df.empty:
