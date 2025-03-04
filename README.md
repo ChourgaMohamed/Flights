@@ -34,6 +34,7 @@ To run this script we use the following dependencies.
 - [Plotly](https://plotly.com/python/)
 - SQLite3 (included with Python)
 
+<<<<<<< HEAD
 To facilitate the use of this script, install the required dependencies from the `requirements.txt` file:
 
 ```bash
@@ -44,3 +45,5 @@ You also need the following files in the same directory as the script:
 
 - **`airports.csv`**: Contains airport data (including location and timezone).
 - **`flights_database.db`**: SQLite database containing flight records.
+=======
+

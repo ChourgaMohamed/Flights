@@ -1,3 +1,5 @@
+# PART 1
+
 import pandas as pd
 import plotly.express as px
 import numpy as np
@@ -208,7 +210,12 @@ plt.subplots_adjust(left=0.3)  # Adjusts left margin
 
 plt.show()
 
-#part 3
+
+
+#PART 2 = CONNECT GITHUB
+
+
+#PART 3
 
 
 # Function to calculate distance between two lat/lon points
