@@ -1,18 +1,30 @@
 import sqlite3
 import pandas as pd
 
-# Path to your database
-db_path = "/Users/laurensrobbe/Desktop/flights_database.db"  # Update path if needed
-
-# Connect to the database
+# Connect to your database
+db_path = "flights_database.db"
 conn = sqlite3.connect(db_path)
 
-# Query first 5 rows from flights table
-query = "SELECT * FROM flights LIMIT 5;"
-df_flights = pd.read_sql(query, conn)
+import sqlite3
+import pandas as pd
 
-# Print the first few rows
-print(df_flights)
+# Connect to your database
+db_path = "flights_database.db"
+conn = sqlite3.connect(db_path)
 
-# Close connection
+# Query to list all tables
+tables_query = "SELECT name FROM sqlite_master WHERE type='table';"
+tables = pd.read_sql(tables_query, conn)
+print("Tables available in the database:")
+print(tables)
+
+
+# Loop through each table and print its schema
+for table in tables['name']:
+    print(f"\nSchema for table '{table}':")
+    schema_query = f"PRAGMA table_info({table});"
+    schema = pd.read_sql(schema_query, conn)
+    print(schema)
+
+# Close the connection
 conn.close()

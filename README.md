@@ -27,12 +27,11 @@ This project focuses on analyzing and visualizing flight information from a larg
 - **Database Queries:**  
   Leveraging SQL queries via sqlite3 to join multiple tables and extract insights from a comprehensive flights database.
 
+## Project Structure
+In our project, we have chosen a program structure that facilitates the execution and testing of individual sub-tasks. These sub-tasks are modular components that can be independently developed and tested. Once they are verified to be working correctly, they are imported into the main dashboard. This approach allows for better organization and maintainability of the codebase, as each sub-task can be managed separately. Additionally, it enhances the overall reliability of the program by ensuring that each component is thoroughly tested before being integrated into the main application.
+
 ## Requirements
-To run this script we use the following dependencies.
-- Python 3.x
-- [Pandas](https://pandas.pydata.org/)
-- [Plotly](https://plotly.com/python/)
-- SQLite3 (included with Python)
+To run this script we use the dependencies in `requirements.txt`. With Python 3.12.9
 
 <<<<<<< HEAD
 To facilitate the use of this script, install the required dependencies from the `requirements.txt` file:
