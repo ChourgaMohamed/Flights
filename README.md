@@ -5,6 +5,7 @@
 Pepijn de Veer, Pedro Cristos Martinez, Laurens Robbe, Mohamed Chourga
 
 ## Overview
+
 This project focuses on analyzing and visualizing flight information from a large dataset of flights departing New York City in 2023. It is divided into three main parts:
 - **Data Exploration and Visualization (Part 1):**  
   Working with the `airports.csv` dataset, this section includes tasks such as mapping airport locations, identifying international versus domestic airports, plotting flight paths from NYC, and computing both Euclidean and geodesic distances between airports.
@@ -16,6 +17,7 @@ This project focuses on analyzing and visualizing flight information from a larg
   Cleaning and optimizing data to perform more advanced cross-refecenced analysis, solving missing values and NaN values.
 
 ## Features
+
 - **Interactive Visualizations:**  
   Use of Plotly Express to generate maps and scatter plots showcasing global and US-specific airport data.
 - **Dynamic Flight Path Mapping:**  
@@ -28,21 +30,43 @@ This project focuses on analyzing and visualizing flight information from a larg
   Leveraging SQL queries via sqlite3 to join multiple tables and extract insights from a comprehensive flights database.
 
 ## Project Structure
+
 In our project, we have chosen a program structure that facilitates the execution and testing of individual sub-tasks. These sub-tasks are modular components that can be independently developed and tested. Once they are verified to be working correctly, they are imported into the main dashboard. This approach allows for better organization and maintainability of the codebase, as each sub-task can be managed separately. Additionally, it enhances the overall reliability of the program by ensuring that each component is thoroughly tested before being integrated into the main application.
 
 ## Requirements
-To run this script we use the dependencies in `requirements.txt`. With Python 3.12.9
 
-<<<<<<< HEAD
-To facilitate the use of this script, install the required dependencies from the `requirements.txt` file:
+This project requires **Python 3.12.9** and the dependencies listed in `requirements.txt`.
 
-```bash
-pip install -r requirements.txt
-```
+### Installation
+1. **Install Python Dependencies**
 
-You also need the following files in the same directory as the script:
+   Run the following command to install the required Python packages:
 
-- **`airports.csv`**: Contains airport data (including location and timezone).
-- **`flights_database.db`**: SQLite database containing flight records.
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Ensure Required Files are Present**
+
+   Make sure the following files are located in the same directory as the script:
+
+   - **`airports.csv`** – Contains airport data, including location and timezone information.
+   - **`flights_database.db`** – SQLite database that stores flight records.
+
+3. **Initialize the Package**
+
+   Before running the Streamlit application, initialize the package by executing:
+
+   ```bash
+   pip install -e .
+   ```
+
+4. **Run the Streamlit App**
+
+   Navigate to the project directory and launch the app with:
+
+   ```bash
+   streamlit run ./flights_project/app.py
+   ```
 =======
 
