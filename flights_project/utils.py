@@ -6,8 +6,11 @@ import sqlite3
 from contextlib import contextmanager
 import pandas as pd
 import os
+import shutil
+import tempfile
+from flights_project.part4.part4 import clean_flights_data
 
-# Define the path to the database and CSV files
+# Define the path to the original database and CSV files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, '..', 'flights_database.db')
 AIRPORTS_CSV_PATH = os.path.join(BASE_DIR, '..', 'airports.csv')
@@ -23,43 +26,31 @@ COLOR_PALETTE = {
 @contextmanager
 def get_db_connection(db_path=DATABASE_PATH):
     """
-    Context manager to handle SQLite database connections.
-    Automatically commits changes and closes the connection.
+    Context manager that creates a temporary copy of the database,
+    cleans the flights data using that copy, and then yields the connection.
+    The temporary database file is deleted after the connection is closed.
     """
-    conn = sqlite3.connect(db_path, check_same_thread=False)
+    # Create a temporary file to store the copy of the database
+    temp_db_file = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+    temp_db_file.close()  # Close the file so that SQLite can open it
+    shutil.copy(db_path, temp_db_file.name)
+    
+    # Connect to the temporary copy
+    conn = sqlite3.connect(temp_db_file.name, check_same_thread=False)
     try:
+        # Clean the flights data on the temporary database;
+        # after cleaning, the flights table will be replaced with cleaned data.
+        clean_flights_data(conn)
         yield conn
     finally:
         conn.close()
-
-def open_connection(db_path=DATABASE_PATH):
-    """Open a database connection manually."""
-    #CALL DB CONNECTION FUNCTION
-
-
-    #PART 4 Cleaning
-    
-    return sqlite3.connect(db_path, check_same_thread=False)
-
-def close_connection(conn):
-    """Close a given database connection."""
-    conn.close()
+        os.remove(temp_db_file.name)
 
 def execute_query(query, params=None, fetch='all', conn=None, db_path=DATABASE_PATH):
     """
     Execute a SQL query and optionally fetch results.
     If a connection is provided, it will be used (and not closed inside).
     Otherwise, a new connection is opened and closed automatically.
-    
-    Args:
-        query (str): The SQL query to execute.
-        params (tuple, optional): Parameters to use with the query.
-        fetch (str, optional): 'all' to fetch all results, 'one' for one result, or None.
-        conn (sqlite3.Connection, optional): An existing open connection.
-        db_path (str, optional): Path to the SQLite database.
-        
-    Returns:
-        The fetched results if applicable, otherwise None.
     """
     def _execute_with_connection(conn):
         cursor = conn.cursor()
@@ -88,7 +79,7 @@ def load_airports_data(csv_path=AIRPORTS_CSV_PATH):
     return df
 
 if __name__ == "__main__":
-    # Example usage: List all tables in the database
+    # Example usage: List all tables in the database copy
     query = "SELECT name FROM sqlite_master WHERE type='table';"
     tables = execute_query(query, fetch='all')
     print("Tables in database:", tables)
