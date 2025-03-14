@@ -12,6 +12,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, '..', 'flights_database.db')
 AIRPORTS_CSV_PATH = os.path.join(BASE_DIR, '..', 'airports.csv')
 
+COLOR_PALETTE = {
+    "pakistan_green": "#134611",
+    "india_green":    "#3E8914",
+    "pigment_green":  "#3DA35D",
+    "light_green":    "#96E072",
+    "nyanza":         "#E8FCCF"
+}
+
 @contextmanager
 def get_db_connection(db_path=DATABASE_PATH):
     """
@@ -26,6 +34,11 @@ def get_db_connection(db_path=DATABASE_PATH):
 
 def open_connection(db_path=DATABASE_PATH):
     """Open a database connection manually."""
+    #CALL DB CONNECTION FUNCTION
+
+
+    #PART 4 Cleaning
+    
     return sqlite3.connect(db_path, check_same_thread=False)
 
 def close_connection(conn):
