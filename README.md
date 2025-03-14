@@ -47,3 +47,33 @@ You also need the following files in the same directory as the script:
 - **`flights_database.db`**: SQLite database containing flight records.
 =======
 
+
+Part 4: Data Wrangling
+
+In this section, we performed extensive data wrangling to ensure the dataset is clean, consistent, and useful for analysis. The following tasks were completed:
+	•	Handling Missing Values: Checked for missing data in the flights table and resolved inconsistencies.
+	•	Duplicate Removal: Identified and removed duplicate flights while ensuring no critical data was lost.
+	•	Datetime Conversion: Transformed scheduled and actual departure/arrival times into datetime objects for better analysis.
+	•	Flight Consistency Checks: Verified that air_time, dep_time, and sched_dep_time align correctly to prevent inconsistencies.
+	•	Local Arrival Time Calculation: Added a new column that computes local arrival times considering airport time zone differences.
+	•	Flight & Aircraft Type Insights: Explored different aircraft manufacturers and analyzed their role in flights departing from NYC.
+	•	Weather & Delay Considerations: Conducted an initial investigation into how weather may impact flight delays.
+
+Part 5: Interactive Dashboard (Streamlit)
+
+We developed an interactive NYC Flight Statistics Dashboard using streamlit, allowing users to explore flight statistics dynamically.
+
+Key Features:
+	1.	General Statistics
+	•	Provides a numerical summary of all flights departing from NYC.
+	•	Displays a histogram of air time for better flight duration insights.
+	2.	Flight Analysis
+	•	Users can select departure and arrival airports to analyze specific routes.
+	•	Shows details like flight number, airline, departure/arrival times.
+	•	Includes a flight duration distribution graph for selected routes.
+	3.	Delay Analysis
+	•	Offers insights into departure delays across different flights.
+	•	Displays a histogram of delay times for a better understanding of patterns.
+	4.	Weather Impact Analysis (New)
+	•	Investigates the relationship between weather conditions and flight delays.
+	•	Helps identify how factors like wind speed and visibility affect flight performance.
