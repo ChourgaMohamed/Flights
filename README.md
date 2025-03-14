@@ -28,6 +28,8 @@ This project focuses on analyzing and visualizing flight information from a larg
   Analysis of time zones, flight frequency, delays, and airplane usage statistics.
 - **Database Queries:**  
   Leveraging SQL queries via sqlite3 to join multiple tables and extract insights from a comprehensive flights database.
+- **Airline Comparison:**
+  Be able to compare primary KPI's of different airlines in a radar chart
 
 ## Project Structure
 
@@ -68,5 +70,4 @@ This project requires **Python 3.12.9** and the dependencies listed in `requirem
    ```bash
    streamlit run ./flights_project/app.py
    ```
-=======
 
