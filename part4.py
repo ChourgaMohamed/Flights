@@ -184,7 +184,7 @@ print(flights[['arr_time', 'local_arr_time', 'dep_offset', 'arr_offset']].head()
 
 #Part4-Last 3 bullet points and futher analysis
 weather = pd.read_sql_query("SELECT * FROM weather", connector)
-weather = convert_times_to_datetime(weather)9
+weather = convert_times_to_datetime(weather)
 
 # #Analyzes the effect of wind speed and precipitation on different plane types.
 def analyze_weather_effect_on_planes(flights_df, weather_df):
