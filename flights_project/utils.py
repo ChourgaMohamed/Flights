@@ -40,7 +40,8 @@ def get_db_connection(db_path=DATABASE_PATH):
     try:
         # Clean the flights data on the temporary database;
         # after cleaning, the flights table will be replaced with cleaned data.
-        clean_flights_data(conn)
+        cleaned_flights = clean_flights_data(conn, verbose=False)
+        cleaned_flights.to_sql('flights', conn, if_exists='replace', index=False)
         yield conn
     finally:
         conn.close()

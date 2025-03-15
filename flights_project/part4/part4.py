@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-def clean_flights_data(conn):
+def clean_flights_data(conn, verbose=False):
     """
     Clean the flights data from the database using the provided connection.
     All cleaning is performed in pandas and the cleaned DataFrame is written
@@ -16,13 +16,16 @@ def clean_flights_data(conn):
     remaining_rows = len(flights_cleaned)
     deleted_rows = total_rows - remaining_rows
     percentage_deleted = (deleted_rows / total_rows) * 100
-    print(f"Percentage of deleted rows: {percentage_deleted:.2f}%")
+    if verbose:
+        print(f"Percentage of deleted rows: {percentage_deleted:.2f}%")
     missing_values = flights_cleaned.isnull().sum()
-    print("Missing values per column:\n", missing_values)
+    if verbose:
+        print("Missing values per column:\n", missing_values)
     
     # Remove duplicates
     duplicates = flights_cleaned.duplicated()
-    print(f"Number of duplicate flights: {duplicates.sum()}")
+    if verbose:
+        print(f"Number of duplicate flights: {duplicates.sum()}")
     flights = flights_cleaned.drop_duplicates()
 
     # Convert times to datetime
@@ -133,7 +136,8 @@ def clean_flights_data(conn):
 
     flights_fixed['is_consistent'] = flights_fixed.apply(check_flight_consistency, axis=1)
     num_inconsistent = (~flights_fixed['is_consistent']).sum()
-    print(f"Percentage of inconsistent flights: {num_inconsistent / len(flights) * 100:.2f}%")
+    if verbose:
+        print(f"Percentage of inconsistent flights: {num_inconsistent / len(flights) * 100:.2f}%")
 
     # Local arrival time adjustment
     airports = pd.read_csv("airports.csv")
@@ -160,14 +164,14 @@ def clean_flights_data(conn):
     airports['tz_offset'] = airports['tz'].apply(convert_timezone)
     airports = airports.dropna(subset=['tz_offset'])
     timezone_dict = dict(zip(airports['faa'], airports['tz_offset']))
-    flights = flights[flights['origin'].map(timezone_dict).notnull() & flights['dest'].map(timezone_dict).notnull()]
-    flights['dep_offset'] = flights['origin'].map(timezone_dict)
-    flights['arr_offset'] = flights['dest'].map(timezone_dict)
-    flights['arr_time'] = pd.to_datetime(flights['arr_time'], errors='coerce')
-    flights['local_arr_time'] = flights['arr_time'] - pd.to_timedelta(flights['dep_offset'], unit='h') + pd.to_timedelta(flights['arr_offset'], unit='h')
+    flights_fixed = flights_fixed[flights_fixed['origin'].map(timezone_dict).notnull() & flights_fixed['dest'].map(timezone_dict).notnull()]
+    flights_fixed['dep_offset'] = flights_fixed['origin'].map(timezone_dict)
+    flights_fixed['arr_offset'] = flights_fixed['dest'].map(timezone_dict)
+    flights_fixed['arr_time'] = pd.to_datetime(flights_fixed['arr_time'], errors='coerce')
+    flights_fixed['local_arr_time'] = flights_fixed['arr_time'] - pd.to_timedelta(flights_fixed['dep_offset'], unit='h') + pd.to_timedelta(flights_fixed['arr_offset'], unit='h')
+    if verbose:
+        print(flights_fixed[['arr_time', 'local_arr_time', 'dep_offset', 'arr_offset']].head())
 
-    print(flights[['arr_time', 'local_arr_time', 'dep_offset', 'arr_offset']].head())
-    
     # Prepare the final cleaned DataFrame.
     # Optionally, remove columns used only for cleaning (e.g., 'is_consistent') if not needed further.
     cleaned_flights = flights_fixed.copy()
@@ -175,4 +179,4 @@ def clean_flights_data(conn):
         cleaned_flights.drop(columns=['is_consistent'], inplace=True)
 
     # Write the cleaned DataFrame back to the database, replacing the original flights table.
-    cleaned_flights.to_sql('flights', conn, if_exists='replace', index=False)
+    return cleaned_flights
