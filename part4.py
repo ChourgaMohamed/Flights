@@ -194,11 +194,19 @@ def analyze_weather_effect_on_planes(flights_df, weather_df):
         print(f"Merge failed. Missing column: {e}")
         return
 
-    plane_weather = merged_df.groupby(['carrier', 'wind_speed', 'precip'])['arr_delay'].mean().reset_index()
+    plane_weather_wind_speed = merged_df.groupby(['wind_speed', 'carrier'])['arr_delay'].mean().reset_index()
+    plane_weather_precip = merged_df.groupby(['precip','carrier'])['arr_delay'].mean().reset_index()
 
     plt.figure(figsize=(10, 6))
-    sns.scatterplot(data=plane_weather, x='wind_speed', y='arr_delay', hue='carrier', style='precip')
-    plt.title('Effect of Wind Speed and Precipitation on Delay by Carrier')
+    sns.scatterplot(data=plane_weather_wind_speed, x='wind_speed', y='arr_delay', hue='carrier' )
+    plt.title('Effect of Wind Speed on Delay by Carrier')
+    plt.xlabel('Wind Speed (mph)')
+    plt.ylabel('Average Arrival Delay (minutes)')
+    plt.legend(title='Carrier')
+    plt.show()
+
+    sns.scatterplot(data=plane_weather_precip, x='precip', y='arr_delay', hue='carrier')
+    plt.title('Effect of Precipitation on Delay by Carrier')
     plt.xlabel('Wind Speed (mph)')
     plt.ylabel('Average Arrival Delay (minutes)')
     plt.legend(title='Carrier')
