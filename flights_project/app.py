@@ -13,7 +13,7 @@ from extra import airline_comparison
 
 # Initialize (or reuse) a persistent database connection in session_state
 if 'db_conn' not in st.session_state:
-    st.session_state.db_conn = utils.open_connection()
+    st.session_state.db_conn = utils.get_db_connection()
 db_conn = st.session_state.db_conn
 
 # Load airports data and create options for selectboxes
