@@ -140,4 +140,3 @@ def plot_nyc_airlines():
     plt.ylabel("Number of Flights")
     plt.title("Most Frequent Airlines from NYC Airports")
     plt.show()
-plot_nyc_airlines()

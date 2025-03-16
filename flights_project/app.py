@@ -3,6 +3,9 @@ Streamlit dashboard for the Flights Project.
 Imports functions from Part 1 and Part 3 to display interactive visualizations.
 Uses a single database connection (opened once and passed to subfunctions).
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
 import pandas as pd
@@ -11,10 +14,10 @@ from part1 import global_and_US_maps, flight_route_functions, distance_analysis
 from part3 import delays_analysis, manufacturers_analysis, flight_statistics
 from extra import airline_comparison
 
-# Initialize (or reuse) a persistent database connection in session_state
-if 'db_conn' not in st.session_state:
-    st.session_state.db_conn = utils.open_connection()
-db_conn = st.session_state.db_conn
+#Initialize (or reuse) a persistent database connection in session_state
+#if 'db_conn' not in st.session_state:
+#    st.session_state.db_conn = utils.open_connection()
+#db_conn = st.session_state.db_conn
 
 # Load airports data and create options for selectboxes
 airports_df = utils.load_airports_data()
