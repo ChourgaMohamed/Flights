@@ -9,7 +9,7 @@ import pandas as pd
 from flights_project import utils
 from part1 import global_and_US_maps, flight_route_functions, distance_analysis
 from part3 import delays_analysis, manufacturers_analysis, flight_statistics
-from extra import airline_comparison
+from extra import airline_comparison, heatmap_analysis
 
 # Initialize (or reuse) a persistent database connection in session_state
 if 'db_conn' not in st.session_state:
@@ -29,7 +29,7 @@ st.write("Interactive dashboard to explore flight data.")
 option = st.sidebar.selectbox("Select Analysis", 
                               ("Global Airports Map", "US Airports Map", 
                                "Flight Route", "Delay Analysis", 
-                               "Manufacturer Analysis", "Flight Statistics", "Airline Comparison"))
+                               "Manufacturer Analysis", "Flight Statistics", "Airline Comparison", "Heatmap Analysis"))
 
 if option == "Global Airports Map":
     st.subheader("Global Airports Map")
@@ -114,4 +114,24 @@ elif option == "Airline Comparison":
                 st.write("No data for the selected carriers.")
         else:
             st.write("No carriers selected.")
+
+elif option == "Heatmap Analysis":
+    st.subheader("Heatmap Analysis")
+    # Let the user select the metric to display
+    metric = st.radio("Select Metric", ("Flight Counts", "Average Departure Delays"))
+    
+    # Option to use all data or filter by week range
+    all_data = st.checkbox("Use all data", value=True)
+    week_range = None
+    if not all_data:
+        # Provide a slider to select a week range (ISO weeks: 1 to 53)
+        week_range = st.slider("Select week range", 1, 53, (1, 53))
+    
+    # Generate the appropriate heatmap based on user selection
+    if metric == "Flight Counts":
+        fig = heatmap_analysis.plot_flights_heatmap(week_range=week_range, conn=db_conn)
+    else:
+        fig = heatmap_analysis.plot_delays_heatmap(week_range=week_range, conn=db_conn)
+    
+    st.pyplot(fig)
 
