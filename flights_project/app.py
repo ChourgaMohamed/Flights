@@ -8,11 +8,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
-import pandas as pd
 from flights_project import utils
 from part1 import global_and_US_maps, flight_route_functions, distance_analysis
 from part3 import delays_analysis, manufacturers_analysis, flight_statistics
-from extra import airline_comparison
+from flights_project.part1.extra import airline_comparison
 
 #Initialize (or reuse) a persistent database connection in session_state
 #if 'db_conn' not in st.session_state:
