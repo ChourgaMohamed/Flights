@@ -83,12 +83,6 @@ def clean_flights_data(conn, verbose=False):
         num_inconsistent = (~flights['is_consistent']).sum()
         print(f"Percentage of inconsistent flights: {num_inconsistent / len(flights) * 100:.2f}%")
 
-     # Prepare the final cleaned DataFrame.
-    # Optionally, remove columns used only for cleaning (e.g., 'is_consistent') if not needed further.
-    flights = flights.copy()
-    if 'is_consistent' in flights.columns:
-        flights.drop(columns=['is_consistent'], inplace=True)
-
 # Local arrival time adjustment
     airports = pd.read_csv("airports.csv")
     timezone_dict = dict(zip(airports['faa'], airports['tz']))
@@ -121,6 +115,11 @@ def clean_flights_data(conn, verbose=False):
     flights['local_arr_time'] = flights['arr_time'] - pd.to_timedelta(flights['dep_offset'], unit='h') + pd.to_timedelta(flights['arr_offset'], unit='h')
     if verbose:
         print(flights[['arr_time', 'local_arr_time', 'dep_offset', 'arr_offset']].head())
+    
+    # Prepare the final cleaned DataFrame.
+    flights = flights.copy()
+    if 'is_consistent' in flights.columns:
+        flights.drop(columns=['is_consistent'], inplace=True)
 
     # Write the cleaned DataFrame back to the database, replacing the original flights table.
     return flights
@@ -191,5 +190,5 @@ def time_to_timedelta(time):
 
 if __name__ == "__main__":
     conn = sqlite3.connect("flights_database.db", check_same_thread=False)
-    test = clean_flights_data(conn)
+    test = clean_flights_data(conn, False)
     print(test)
