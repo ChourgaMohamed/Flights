@@ -43,7 +43,7 @@ def plot_manufacturer_data(destination="LAX", conn=None):
 
 def main():
     """Run manufacturers analysis (opens its own DB connection if none provided)."""
-    plot_manufacturer_data("JFK")
+    plot_manufacturer_data("LAX")
     plt.show()
 
 if __name__ == "__main__":

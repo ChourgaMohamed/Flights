@@ -18,13 +18,38 @@ def haversine(lat1, lon1, lat2, lon2):
     Calculate the great circle distance between two points 
     on the Earth specified in decimal degrees.
     """
-    R = 6371  # Earth radius in kilometers
+    R = 3959  # Earth radius in miles
     lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
     dlon = lon2 - lon1
     a = np.sin(dlat/2.0)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2.0)**2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     return R * c
+
+def get_departure_origins(conn=None):
+    """
+    Retrieve unique departure origins from the flights table and return as a DataFrame with airport names from the airports database.
+    """
+    query_origins = """
+    SELECT DISTINCT origin
+    FROM flights;
+    """
+    query_airports = """
+    SELECT faa, name
+    FROM airports;
+    """
+    
+    if conn is None:
+        with utils.get_db_connection() as conn:
+            df_origins = pd.read_sql(query_origins, conn)
+            df_airports = pd.read_sql(query_airports, conn)
+    else:
+        df_origins = pd.read_sql(query_origins, conn)
+        df_airports = pd.read_sql(query_airports, conn)
+    
+    df_origins = df_origins.rename(columns={"origin": "faa"})
+    df_origins = df_origins.merge(df_airports, on="faa", how="left")
+    return df_origins
 
 def print_sample_flights(conn=None):
     """
@@ -44,22 +69,6 @@ def print_sample_flights(conn=None):
     else:
         df = pd.read_sql(query, conn)
     print(df)
-    return df
-
-def get_nyc_airports(conn=None):
-    """
-    Retrieve NYC airports (JFK, LGA, EWR) from the database.
-    """
-    query = """
-    SELECT faa, name, tzone
-    FROM airports
-    WHERE faa IN ('JFK', 'LGA', 'EWR');
-    """
-    if conn is None:
-        with utils.get_db_connection() as conn:
-            df = pd.read_sql(query, conn)
-    else:
-        df = pd.read_sql(query, conn)
     return df
 
 def get_nyc_flights(conn=None):
@@ -99,7 +108,6 @@ def plot_top_nyc_destinations(conn=None):
     ax.bar(top10["dest"], top10["flight_count"], color="royalblue", edgecolor="black")
     ax.set_xlabel("Destination Airport")
     ax.set_ylabel("Number of Flights")
-    ax.set_title("Top 10 Flight Destinations from NYC")
     plt.xticks(rotation=45)
     return fig
 
@@ -326,13 +334,14 @@ def verify_distance_computation(conn=None):
     return df
 
 def main():
+    # Print the departure origins
+    print("All Departure Origins in Database:")
+    origins = get_departure_origins()
+    print(origins)
+
     """Run flight analysis functions."""
     print("Sample Flight Data:")
     print_sample_flights()
-    
-    print("\nNYC Airports:")
-    nyc_airports = get_nyc_airports()
-    print(nyc_airports)
     
     print("\nNYC Flights (first 5 rows):")
     nyc_flights = get_nyc_flights()
