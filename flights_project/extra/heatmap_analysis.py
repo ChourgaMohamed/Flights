@@ -62,8 +62,8 @@ def plot_flights_heatmap(week_range=None, conn=None):
     """
     data = get_flights_heatmap_data(week_range, conn)
     fig, ax = plt.subplots(figsize=(10, 8))
-    # Plot the heatmap (origin lower so hour 0 is at the bottom)
-    cax = ax.imshow(data, aspect='auto', origin='lower')
+    # Use the custom colormap from utils for consistent color mapping
+    cax = ax.imshow(data, aspect='auto', origin='lower', cmap=utils.CUSTOM_CMAP)
     ax.set_title("Heatmap of Flight Counts")
     ax.set_xticks(range(len(data.columns)))
     ax.set_xticklabels(data.columns)
@@ -124,7 +124,8 @@ def plot_delays_heatmap(week_range=None, conn=None):
     """
     data = get_delays_heatmap_data(week_range, conn)
     fig, ax = plt.subplots(figsize=(10, 8))
-    cax = ax.imshow(data, aspect='auto', origin='lower', cmap='viridis')
+    # Use the custom colormap from utils for consistent color mapping
+    cax = ax.imshow(data, aspect='auto', origin='lower', cmap=utils.CUSTOM_CMAP)
     ax.set_title("Heatmap of Average Departure Delays (minutes)")
     ax.set_xticks(range(len(data.columns)))
     ax.set_xticklabels(data.columns)

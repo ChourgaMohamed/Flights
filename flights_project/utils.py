@@ -6,6 +6,7 @@ import sqlite3
 from contextlib import contextmanager
 import pandas as pd
 import os
+import matplotlib.colors as mcolors
 
 # Define the path to the database and CSV files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +20,11 @@ COLOR_PALETTE = {
     "light_green":    "#96E072",
     "nyanza":         "#E8FCCF"
 }
+
+CUSTOM_CMAP = mcolors.LinearSegmentedColormap.from_list(
+    "custom_cmap", 
+    [COLOR_PALETTE["nyanza"], COLOR_PALETTE["light_green"], COLOR_PALETTE["pigment_green"], COLOR_PALETTE["india_green"], COLOR_PALETTE["pakistan_green"]]
+)
 
 @contextmanager
 def get_db_connection(db_path=DATABASE_PATH):
