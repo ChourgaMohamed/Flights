@@ -1,17 +1,6 @@
 import plotly.express as px
 import pandas as pd
-import numpy as np
 from flights_project import utils
-
-
-# Define the color scale based on the provided color palette
-CUSTOM_COLOR_SCALE = [
-    "#134611",  # Pakistan green
-    "#3E8914",  # India green
-    "#3DA35D",  # Pigment green
-    "#96E072",  # Light green
-    "#E8FCCF"   # Nyanza
-]
 
 def load_clean_airports_data():
     """Load and clean airport data."""
@@ -23,12 +12,17 @@ def load_clean_airports_data():
 
     # Drop rows where lat/lon is missing
     df = df.dropna(subset=["lat", "lon"])
+    
+    # Drop rows where NA is present in tzone column
+    df = df[df["tzone"] != "NA"]
+    # Drop rows where nan is present in tzone column
+    df = df[df["tzone"] != "nan"]
 
     return df
 
 
 def plot_airports():
-    """Plot a world map of all airports, color-coded by altitude."""
+    """Plot a world map of all airports in the dataset, color-coded by altitude."""
     df = load_clean_airports_data()
 
     fig = px.scatter_geo(
@@ -36,15 +30,15 @@ def plot_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="Airports Worldwide (Color Coded by Altitude)",
+        title="Airports, in the Dataset (Color Coded by Altitude)",
         color=df["alt"],  # Color by altitude
-        color_continuous_scale=CUSTOM_COLOR_SCALE
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
     return fig
 
 
 def plot_us_airports():
-    """Plot only US airports."""
+    """Plot only Northern American Airports."""
     df = load_clean_airports_data()
 
     # Known US time zones
@@ -61,15 +55,15 @@ def plot_us_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="US Airports (Color Coded by Altitude)",
+        title="Northern American Airports (Color Coded by Altitude)",
         color=us_airports["alt"],  # Color by altitude
-        color_continuous_scale=CUSTOM_COLOR_SCALE
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
     return fig
 
 
 def plot_non_us_airports():
-    """Plot only non-US airports."""
+    """Plot only non-Northern American Airports."""
     df = load_clean_airports_data()
 
     # List of known US time zones
@@ -84,7 +78,7 @@ def plot_non_us_airports():
         (~df["tzone"].str.contains("America", na=False)) &  # Exclude any timezone containing 'America'
         (df["tzone"].notna()) &  # Ensure non-null values
         (df["tzone"] != "NA") &  # Explicitly exclude 'NA' values
-        (df["tzone"] != "Unknown")  # Exclude any unknown values
+        (df["tzone"] != "Unknown") # Exclude any unknown values
     ]
 
     fig = px.scatter_geo(
@@ -92,12 +86,11 @@ def plot_non_us_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="Non-US Airports (Color Coded by Altitude)",
+        title="non-Northern American Airports (Color Coded by Altitude)",
         color=non_us_airports["alt"],  # Color by altitude
-        color_continuous_scale=CUSTOM_COLOR_SCALE
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
     return fig
-
 
 if __name__ == "__main__":
     fig1 = plot_airports()
