@@ -9,9 +9,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
 from flights_project import utils
-from part1 import global_and_US_maps, flight_route_functions, distance_analysis
+# from part1 import global_and_US_maps, flight_route_functions, distance_analysis
 from part3 import delays_analysis, manufacturers_analysis, flight_statistics
-from extra import airline_comparison, heatmap_analysis
+from features import airline_comparison, heatmap_analysis
 
 #Initialize (or reuse) a persistent database connection in session_state
 #if 'db_conn' not in st.session_state:
@@ -33,26 +33,26 @@ option = st.sidebar.selectbox("Select Analysis",
                                "Flight Route", "Delay Analysis", 
                                "Manufacturer Analysis", "Flight Statistics", "Airline Comparison", "Heatmap Analysis"))
 
-if option == "Global Airports Map":
-    st.subheader("Global Airports Map")
-    fig = global_and_US_maps.plot_global_airports()
-    st.plotly_chart(fig)
+# if option == "Global Airports Map":
+#     st.subheader("Global Airports Map")
+#     fig = global_and_US_maps.plot_global_airports()
+#     st.plotly_chart(fig)
 
-elif option == "US Airports Map":
-    st.subheader("US Airports Map")
-    fig = global_and_US_maps.plot_us_airports()
-    st.plotly_chart(fig)
+# elif option == "US Airports Map":
+#     st.subheader("US Airports Map")
+#     fig = global_and_US_maps.plot_us_airports()
+#     st.plotly_chart(fig)
 
-elif option == "Flight Route":
-    st.subheader("Flight Route from NYC")
-    selected_airport = st.selectbox("Type or select target airport", options=airport_options_with_placeholder, index=0)
-    if selected_airport != placeholder:
-        faa_code = selected_airport.split(" - ")[0]
-        if st.button("Plot Route"):
-            fig = flight_route_functions.plot_flight_route(faa_code)
-            st.plotly_chart(fig)
+# elif option == "Flight Route":
+#     st.subheader("Flight Route from NYC")
+#     selected_airport = st.selectbox("Type or select target airport", options=airport_options_with_placeholder, index=0)
+#     if selected_airport != placeholder:
+#         faa_code = selected_airport.split(" - ")[0]
+#         if st.button("Plot Route"):
+#             fig = flight_route_functions.plot_flight_route(faa_code)
+#             st.plotly_chart(fig)
 
-elif option == "Delay Analysis":
+if option == "Delay Analysis":
     st.subheader("Flight Delay Analysis")
     st.write("Delay histogram")
     fig = delays_analysis.plot_delay_histogram(conn=db_conn)
