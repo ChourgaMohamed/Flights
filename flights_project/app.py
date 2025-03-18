@@ -13,10 +13,10 @@ from flights_project import utils
 from part3 import delays_analysis, manufacturers_analysis, flight_statistics
 from features import airline_comparison, heatmap_analysis
 
-#Initialize (or reuse) a persistent database connection in session_state
-#if 'db_conn' not in st.session_state:
-#    st.session_state.db_conn = utils.open_connection()
-#db_conn = st.session_state.db_conn
+# Initialize (or reuse) a persistent database connection in session_state
+if 'db_conn' not in st.session_state:
+    st.session_state.db_conn = utils.get_persistent_db_connection()
+db_conn = st.session_state.db_conn
 
 # Load airports data and create options for selectboxes
 airports_df = utils.load_airports_data()

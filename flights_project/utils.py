@@ -53,6 +53,24 @@ def get_db_connection(db_path=DATABASE_PATH):
         conn.close()
         os.remove(temp_db_file.name)
 
+def get_persistent_db_connection(db_path=DATABASE_PATH):
+    """
+    Returns a persistent database connection for long-running applications.
+    Note: The caller is responsible for closing this connection.
+    """
+    temp_db_file = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+    temp_db_file.close()
+    shutil.copy(db_path, temp_db_file.name)
+    
+    conn = sqlite3.connect(temp_db_file.name, check_same_thread=False)
+    cleaned_flights = clean_flights_data(conn, verbose=False)
+    cleaned_flights.to_sql('flights', conn, if_exists='replace', index=False)
+    
+    # Don't try to store the filename on the connection object
+    # The temp file will be orphaned, but in a Streamlit app context
+    # this is acceptable as the OS will clean it up eventually
+    return conn
+
 def execute_query(query, params=None, fetch='all', conn=None, db_path=DATABASE_PATH):
     """
     Execute a SQL query and optionally fetch results.
