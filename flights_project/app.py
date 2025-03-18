@@ -3,14 +3,11 @@ Streamlit dashboard for the Flights Project.
 Imports functions from Part 1 and Part 3 to display interactive visualizations.
 Uses a single database connection (opened once and passed to subfunctions).
 """
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
 from flights_project import utils
-# from part1 import global_and_US_maps, flight_route_functions, distance_analysis
-from part3 import delays_analysis, manufacturers_analysis, flight_statistics
+from part1 import plot_routes, plot_airports
+from part3 import delays_analysis, manufacturers_analysis
 from features import airline_comparison, heatmap_analysis
 
 # Initialize (or reuse) a persistent database connection in session_state
@@ -33,26 +30,26 @@ option = st.sidebar.selectbox("Select Analysis",
                                "Flight Route", "Delay Analysis", 
                                "Manufacturer Analysis", "Flight Statistics", "Airline Comparison", "Heatmap Analysis"))
 
-# if option == "Global Airports Map":
-#     st.subheader("Global Airports Map")
-#     fig = global_and_US_maps.plot_global_airports()
-#     st.plotly_chart(fig)
+if option == "Global Airports Map":
+    st.subheader("Global Airports Map")
+    fig = plot_airports.plot_airports()
+    st.plotly_chart(fig)
 
-# elif option == "US Airports Map":
-#     st.subheader("US Airports Map")
-#     fig = global_and_US_maps.plot_us_airports()
-#     st.plotly_chart(fig)
+elif option == "US Airports Map":
+    st.subheader("US Airports Map")
+    fig = plot_airports.plot_us_airports()
+    st.plotly_chart(fig)
 
-# elif option == "Flight Route":
-#     st.subheader("Flight Route from NYC")
-#     selected_airport = st.selectbox("Type or select target airport", options=airport_options_with_placeholder, index=0)
-#     if selected_airport != placeholder:
-#         faa_code = selected_airport.split(" - ")[0]
-#         if st.button("Plot Route"):
-#             fig = flight_route_functions.plot_flight_route(faa_code)
-#             st.plotly_chart(fig)
+if option == "Flight Route":
+    st.subheader("Flight Route from NYC")
+    selected_airport = st.selectbox("Type or select target airport", options=airport_options_with_placeholder, index=0)
+    if selected_airport != placeholder:
+        faa_code = selected_airport.split(" - ")[0]
+        if st.button("Plot Route"):
+            fig = plot_routes.plot_flight_route(faa_code)
+            st.plotly_chart(fig)
 
-if option == "Delay Analysis":
+elif option == "Delay Analysis":
     st.subheader("Flight Delay Analysis")
     st.write("Delay histogram")
     fig = delays_analysis.plot_delay_histogram(conn=db_conn)
@@ -71,17 +68,17 @@ elif option == "Manufacturer Analysis":
                 st.pyplot(result)
 
 
-elif option == "Flight Statistics":
-    st.subheader("General Flight Statistics")
-    total = flight_statistics.get_total_flights(conn=db_conn)
-    st.write(f"Total Flights: {total}")
-    busiest = flight_statistics.get_busiest_airports(conn=db_conn)
-    st.write("Busiest Airports:")
-    for row in busiest:
-        st.write(f"Airport: {row[0]}, Flights: {row[1]}")
-    st.subheader("Distance Analysis")
-    fig = distance_analysis.plot_distance_histograms()
-    st.pyplot(fig)
+# elif option == "Flight Statistics":
+#     st.subheader("General Flight Statistics")
+#     total = flight_statistics.get_total_flights(conn=db_conn)
+#     st.write(f"Total Flights: {total}")
+#     busiest = flight_statistics.get_busiest_airports(conn=db_conn)
+#     st.write("Busiest Airports:")
+#     for row in busiest:
+#         st.write(f"Airport: {row[0]}, Flights: {row[1]}")
+#     st.subheader("Distance Analysis")
+#     fig = distance_analysis.plot_distance_histograms()
+#     st.pyplot(fig)
 
 elif option == "Airline Comparison":
     st.subheader("Airline Performance Comparison - Spider Chart")
