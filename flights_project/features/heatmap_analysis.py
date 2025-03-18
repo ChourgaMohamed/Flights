@@ -1,11 +1,11 @@
 """
 This module provides heatmap analysis functions for flight data.
-It creates heatmaps for flight counts and average departure delays aggregated by day of week and hour of day.
+It creates heatmaps for flight counts and average departure delays aggregated by day of week and hour of day,
+using Plotly Express for interactive visualization.
 """
 
 import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
+import plotly.express as px
 from flights_project import utils
 
 def get_flights_heatmap_data(week_range=None, conn=None):
@@ -50,7 +50,7 @@ def get_flights_heatmap_data(week_range=None, conn=None):
 
 def plot_flights_heatmap(week_range=None, conn=None):
     """
-    Plot a heatmap of flight counts aggregated by day of week and hour of day.
+    Plot a heatmap of flight counts aggregated by day of week and hour of day using Plotly Express.
 
     Args:
         week_range (tuple, optional): (start_week, end_week) to filter data.
@@ -58,20 +58,22 @@ def plot_flights_heatmap(week_range=None, conn=None):
         conn (sqlite3.Connection, optional): DB connection.
 
     Returns:
-        fig (Figure): Matplotlib figure object containing the heatmap.
+        fig (Figure): Plotly figure object containing the interactive heatmap.
     """
     data = get_flights_heatmap_data(week_range, conn)
-    fig, ax = plt.subplots(figsize=(10, 8))
-    # Use the custom colormap from utils for consistent color mapping
-    cax = ax.imshow(data, aspect='auto', origin='lower', cmap=utils.CUSTOM_CMAP)
-    ax.set_title("Heatmap of Flight Counts")
-    ax.set_xticks(range(len(data.columns)))
-    ax.set_xticklabels(data.columns)
-    ax.set_yticks(range(24))
-    ax.set_yticklabels(range(24))
-    ax.set_xlabel("Day of Week")
-    ax.set_ylabel("Hour of Day (24h)")
-    fig.colorbar(cax, ax=ax, label="Number of Flights")
+    fig = px.imshow(
+        data,
+        labels={
+            "x": "Day of Week",
+            "y": "Hour of Day (24h)",
+            "color": "Number of Flights"
+        },
+        x=data.columns,
+        y=data.index,
+        aspect="auto",
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE  # Ensure CUSTOM_CMAP is a valid Plotly color scale (e.g., list of hex colors)
+    )
+    fig.update_layout(title="Heatmap of Flight Counts")
     return fig
 
 def get_delays_heatmap_data(week_range=None, conn=None):
@@ -112,7 +114,7 @@ def get_delays_heatmap_data(week_range=None, conn=None):
 
 def plot_delays_heatmap(week_range=None, conn=None):
     """
-    Plot a heatmap of average departure delays aggregated by day of week and hour of day.
+    Plot a heatmap of average departure delays aggregated by day of week and hour of day using Plotly Express.
 
     Args:
         week_range (tuple, optional): (start_week, end_week) to filter data.
@@ -120,24 +122,28 @@ def plot_delays_heatmap(week_range=None, conn=None):
         conn (sqlite3.Connection, optional): DB connection.
 
     Returns:
-        fig (Figure): Matplotlib figure object containing the heatmap.
+        fig (Figure): Plotly figure object containing the interactive heatmap.
     """
     data = get_delays_heatmap_data(week_range, conn)
-    fig, ax = plt.subplots(figsize=(10, 8))
-    # Use the custom colormap from utils for consistent color mapping
-    cax = ax.imshow(data, aspect='auto', origin='lower', cmap=utils.CUSTOM_CMAP)
-    ax.set_title("Heatmap of Average Departure Delays (minutes)")
-    ax.set_xticks(range(len(data.columns)))
-    ax.set_xticklabels(data.columns)
-    ax.set_yticks(range(24))
-    ax.set_yticklabels(range(24))
-    ax.set_xlabel("Day of Week")
-    ax.set_ylabel("Hour of Day (24h)")
-    fig.colorbar(cax, ax=ax, label="Average Delay (minutes)")
+    fig = px.imshow(
+        data,
+        labels={
+            "x": "Day of Week",
+            "y": "Hour of Day (24h)",
+            "color": "Average Delay (minutes)"
+        },
+        x=data.columns,
+        y=data.index,
+        aspect="auto",
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE  # Ensure CUSTOM_CMAP is compatible with Plotly Express
+    )
+    fig.update_layout(title="Heatmap of Average Departure Delays (minutes)")
     return fig
 
 if __name__ == "__main__":
     # For testing purposes: show both heatmaps using all data.
-    fig1 = plot_flights_heatmap()
-    fig2 = plot_delays_heatmap()
-    plt.show()
+    flights_fig = plot_flights_heatmap()
+    delays_fig = plot_delays_heatmap()
+    # To view the figures in a browser or interactive window:
+    flights_fig.show()
+    delays_fig.show()

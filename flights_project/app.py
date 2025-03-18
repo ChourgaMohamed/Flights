@@ -85,34 +85,28 @@ elif option == "Airline Comparison":
 
     # 1. Get all carriers (names or codes) from airline_comparison
     all_carriers = airline_comparison.get_all_carriers(conn=db_conn)
-    if not all_carriers:
-        st.write("No valid carriers found in the database.")
-    else:
-        # 2. Get the top 3 carriers by total flights (for default selection)
-        top_3 = airline_comparison.get_top_carriers_by_flight_count(conn=db_conn, limit=3)
-        
-        # If for some reason top_3 is empty, fallback to all_carriers
-        if not top_3:
-            top_3 = all_carriers[:3]
 
-        # 3. Let the user pick carriers; default is top_3
-        selected_carriers = st.multiselect(
-            "Select carriers to display",
-            all_carriers,
-            default=top_3
+    # # 2. Get the top 3 carriers by total flights (for default selection)
+    # top_3 = airline_comparison.get_top_carriers_by_flight_count(conn=db_conn, limit=3)
+
+    # 3. Let the user pick carriers; default is top_3
+    selected_carriers = st.multiselect(
+        "Select carriers to display",
+        all_carriers,
+        default= ["Allegiant Air", "Alaska Airlines Inc.", "Frontier Airlines Inc."]
+    )
+
+    # 4. Plot only if user selected at least one
+    if selected_carriers:
+        fig = airline_comparison.plot_airline_performance_spider(
+            conn=db_conn, carriers=selected_carriers
         )
-
-        # 4. Plot only if user selected at least one
-        if selected_carriers:
-            fig = airline_comparison.plot_airline_performance_spider(
-                conn=db_conn, carriers=selected_carriers
-            )
-            if fig:
-                st.pyplot(fig)
-            else:
-                st.write("No data for the selected carriers.")
+        if fig:
+            st.plotly_chart(fig)
         else:
-            st.write("No carriers selected.")
+            st.write("No data for the selected carriers.")
+    else:
+        st.write("No carriers selected.")
 
 elif option == "Heatmap Analysis":
     st.subheader("Heatmap Analysis")
@@ -132,5 +126,5 @@ elif option == "Heatmap Analysis":
     else:
         fig = heatmap_analysis.plot_delays_heatmap(week_range=week_range, conn=db_conn)
     
-    st.pyplot(fig)
+    st.plotly_chart(fig)
 

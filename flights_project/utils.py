@@ -29,6 +29,14 @@ CUSTOM_CMAP = mcolors.LinearSegmentedColormap.from_list(
     [COLOR_PALETTE["nyanza"], COLOR_PALETTE["light_green"], COLOR_PALETTE["pigment_green"], COLOR_PALETTE["india_green"], COLOR_PALETTE["pakistan_green"]]
 )
 
+CUSTOM_PLOTLY_COLOR_SCALE = [
+    [0.0, COLOR_PALETTE["nyanza"]],
+    [0.25, COLOR_PALETTE["light_green"]],
+    [0.5, COLOR_PALETTE["pigment_green"]],
+    [0.75, COLOR_PALETTE["india_green"]],
+    [1.0, COLOR_PALETTE["pakistan_green"]]
+]
+
 @contextmanager
 def get_db_connection(db_path=DATABASE_PATH):
     """

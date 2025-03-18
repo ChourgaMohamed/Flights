@@ -7,19 +7,17 @@ This module investigates correlations between:
     - Number of engines and flight distance
     - Number of seats and flight distance
 
-It produces two visualizations:
-    1. Scatter plots for various relationships (unchanged).
-    2. A scatter plot of average flight distance vs. plane manufacturing year,
-       where each dot represents a plane model.
-       
+It produces three visualizations:
+    1. A correlation heatmap.
+    2. Four scatter plots for various relationships.
+    3. A scatter plot of maximum flight distance vs. maximum air time for each plane model.
+
 All outputs (plots and prints) are routed through main.
 """
 
-import sqlite3
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.express as px
+from plotly.subplots import make_subplots
 from flights_project import utils
 
 def get_plane_flight_data(conn=None):
@@ -58,17 +56,26 @@ def analyze_correlations(df):
         - Engines and flight distance
         - Seats and flight distance
         
-    Returns the correlation heatmap as a figure.
+    Returns the correlation heatmap as a Plotly figure.
     """
     cols = ['year', 'air_time', 'distance', 'engines', 'seats']
     corr_matrix = df[cols].corr()
     print("Correlation Matrix:")
     print(corr_matrix)
     
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111)
-    sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
-    ax.set_title("Correlation Matrix for Plane and Flight Variables")
+    # Create a custom colorscale using the palette:
+    custom_colorscale = [
+        [0, utils.COLOR_PALETTE["nyanza"]],
+        [0.5, utils.COLOR_PALETTE["light_green"]],
+        [1, utils.COLOR_PALETTE["pakistan_green"]]
+    ]
+    
+    fig = px.imshow(
+        corr_matrix,
+        text_auto=True,
+        color_continuous_scale=custom_colorscale,
+        title="Correlation Matrix for Plane and Flight Variables"
+    )
     return fig
 
 def plot_scatter_plots(df):
@@ -79,35 +86,79 @@ def plot_scatter_plots(df):
         - Number of Engines vs. Flight Distance
         - Number of Seats vs. Flight Distance
         
-    Returns the figure containing the subplots.
+    Returns a Plotly figure containing the 2x2 subplots.
     """
-    fig = plt.figure(figsize=(14, 10))
+    # Create a subplot figure with 2 rows and 2 columns
+    subplot_titles = [
+        "Year vs Flight Duration",
+        "Year vs Flight Distance",
+        "Engines vs Flight Distance",
+        "Seats vs Flight Distance"
+    ]
+    fig = make_subplots(rows=2, cols=2, subplot_titles=subplot_titles)
     
-    ax1 = fig.add_subplot(2, 2, 1)
-    ax1.scatter(df['year'], df['air_time'], alpha=0.5)
-    ax1.set_xlabel("Plane Manufacturing Year")
-    ax1.set_ylabel("Flight Duration (air_time)")
-    ax1.set_title("Year vs Flight Duration")
+    # Scatter 1: Year vs Flight Duration
+    scatter1 = px.scatter(
+        df,
+        x="year",
+        y="air_time",
+        opacity=0.5,
+        color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]],
+        labels={"year": "Plane Manufacturing Year", "air_time": "Flight Duration (min)"}
+    )
+    for trace in scatter1.data:
+        fig.add_trace(trace, row=1, col=1)
     
-    ax2 = fig.add_subplot(2, 2, 2)
-    ax2.scatter(df['year'], df['distance'], alpha=0.5, color="green")
-    ax2.set_xlabel("Plane Manufacturing Year")
-    ax2.set_ylabel("Flight Distance")
-    ax2.set_title("Year vs Flight Distance")
+    # Scatter 2: Year vs Flight Distance
+    scatter2 = px.scatter(
+        df,
+        x="year",
+        y="distance",
+        opacity=0.5,
+        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]],
+        labels={"year": "Plane Manufacturing Year", "distance": "Flight Distance"}
+    )
+    for trace in scatter2.data:
+        fig.add_trace(trace, row=1, col=2)
     
-    ax3 = fig.add_subplot(2, 2, 3)
-    ax3.scatter(df['engines'], df['distance'], alpha=0.5, color="orange")
-    ax3.set_xlabel("Number of Engines")
-    ax3.set_ylabel("Flight Distance")
-    ax3.set_title("Engines vs Flight Distance")
+    # Scatter 3: Engines vs Flight Distance
+    scatter3 = px.scatter(
+        df,
+        x="engines",
+        y="distance",
+        opacity=0.5,
+        color_discrete_sequence=[utils.COLOR_PALETTE["pigment_green"]],
+        labels={"engines": "Number of Engines", "distance": "Flight Distance"}
+    )
+    for trace in scatter3.data:
+        fig.add_trace(trace, row=2, col=1)
     
-    ax4 = fig.add_subplot(2, 2, 4)
-    ax4.scatter(df['seats'], df['distance'], alpha=0.5, color="purple")
-    ax4.set_xlabel("Number of Seats")
-    ax4.set_ylabel("Flight Distance")
-    ax4.set_title("Seats vs Flight Distance")
+    # Scatter 4: Seats vs Flight Distance
+    scatter4 = px.scatter(
+        df,
+        x="seats",
+        y="distance",
+        opacity=0.5,
+        color_discrete_sequence=[utils.COLOR_PALETTE["light_green"]],
+        labels={"seats": "Number of Seats", "distance": "Flight Distance"}
+    )
+    for trace in scatter4.data:
+        fig.add_trace(trace, row=2, col=2)
     
-    fig.tight_layout()
+    # Update axes titles for clarity
+    fig.update_xaxes(title_text="Plane Manufacturing Year", row=1, col=1)
+    fig.update_yaxes(title_text="Flight Duration (min)", row=1, col=1)
+    
+    fig.update_xaxes(title_text="Plane Manufacturing Year", row=1, col=2)
+    fig.update_yaxes(title_text="Flight Distance", row=1, col=2)
+    
+    fig.update_xaxes(title_text="Number of Engines", row=2, col=1)
+    fig.update_yaxes(title_text="Flight Distance", row=2, col=1)
+    
+    fig.update_xaxes(title_text="Number of Seats", row=2, col=2)
+    fig.update_yaxes(title_text="Flight Distance", row=2, col=2)
+    
+    fig.update_layout(height=800, showlegend=False, title_text="Scatter Plots for Plane and Flight Relationships")
     return fig
 
 def plot_model_distance_year(df):
@@ -115,25 +166,29 @@ def plot_model_distance_year(df):
     Create a scatter plot based on maximum flight distance and maximum air time
     for each plane model. Each dot represents a plane model and is annotated with its model name.
     
-    Returns the figure.
+    Returns the Plotly figure.
     """
-    # Aggregate by model: average flight distance and first year (assuming year is constant per model)
+    # Aggregate by model: maximum flight distance and maximum air time per model
     df_grouped = df.groupby('model').agg({
         'distance': 'max',
         'air_time': 'max'
     }).reset_index()
     
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(111)
-    ax.scatter(df_grouped['distance'], df_grouped['air_time'], alpha=0.7)
-    ax.set_xlabel("Maximum Flight Distance")
-    ax.set_ylabel("Maximum Air Time")
-    ax.set_title("Plane Models: Maximum Distance vs. Maximum Air Time")
-    
-    # Annotate each point with the plane model
-    for _, row in df_grouped.iterrows():
-        ax.text(row['distance'], row['air_time'], row['model'], fontsize=9, ha='right', va='bottom')
-    
+    fig = px.scatter(
+        df_grouped,
+        x="distance",
+        y="air_time",
+        text="model",
+        opacity=0.7,
+        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]],
+        labels={"distance": "Maximum Flight Distance", "air_time": "Maximum Air Time"}
+    )
+    fig.update_traces(textposition="top center")
+    fig.update_layout(
+        title="Plane Models: Maximum Distance vs. Maximum Air Time",
+        xaxis_title="Maximum Flight Distance",
+        yaxis_title="Maximum Air Time"
+    )
     return fig
 
 def main():
@@ -142,14 +197,15 @@ def main():
     print("First few rows of combined flight and plane data:")
     print(df.head())
     
-    # Get figures from the various functions
+    # Generate figures from the various functions
     fig_corr = analyze_correlations(df)
     fig_scatter = plot_scatter_plots(df)
     fig_model = plot_model_distance_year(df)
     
     # Display the figures
-    # Depending on your environment, you may call plt.show() once to display all figures.
-    plt.show()
+    fig_corr.show()
+    fig_scatter.show()
+    fig_model.show()
 
 if __name__ == "__main__":
     main()
