@@ -6,6 +6,7 @@ import sqlite3
 from contextlib import contextmanager
 import pandas as pd
 import os
+import matplotlib.colors as mcolors
 import shutil
 import tempfile
 from flights_project.part4.part4 import clean_flights_data
@@ -22,6 +23,11 @@ COLOR_PALETTE = {
     "light_green":    "#96E072",
     "nyanza":         "#E8FCCF"
 }
+
+CUSTOM_CMAP = mcolors.LinearSegmentedColormap.from_list(
+    "custom_cmap", 
+    [COLOR_PALETTE["nyanza"], COLOR_PALETTE["light_green"], COLOR_PALETTE["pigment_green"], COLOR_PALETTE["india_green"], COLOR_PALETTE["pakistan_green"]]
+)
 
 @contextmanager
 def get_db_connection(db_path=DATABASE_PATH):
