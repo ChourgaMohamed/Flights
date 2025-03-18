@@ -1,5 +1,10 @@
-# Flight Information Dashboard
-
+# Flights Information Dashboard
+## Table of contents
+- [Overview](#overview)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Dashboard](#dashboard)
 ## Team members
 
 Pepijn de Veer, Pedro Cristos Martinez, Laurens Robbe, Mohamed Chourga
@@ -37,7 +42,7 @@ In our project, we have chosen a program structure that facilitates the executio
 
 ## Requirements
 
-This project requires **Python 3.12.9** and the dependencies listed in `requirements.txt`.
+This project requires **Python 3.12.9, SQLite3, Pandas, Seaborn, Matplotlib** installed and the dependencies listed in `requirements.txt`.
 
 ### Installation
 1. **Install Python Dependencies**
@@ -71,3 +76,7 @@ This project requires **Python 3.12.9** and the dependencies listed in `requirem
    streamlit run ./flights_project/app.py
    ```
 
+## Dashboard
+
+To visualize the dashboard you follow the step 4 above and the final interactive dashboard is prompted in an external internet
+application. The dashboard has interesting features that you can have a look at so feel free to navigate through it.
