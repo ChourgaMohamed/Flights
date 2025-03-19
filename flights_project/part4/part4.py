@@ -26,6 +26,42 @@ def convert_times_to_datetime(df):
         print(f"An error occurred while combining columns to datetime: {e}")
     return df
 
+def clean_planes_data(conn, verbose=False):
+    planes = pd.read_sql_query("SELECT * FROM planes", conn)
+    planes = planes.dropna()
+    planes = planes.drop_duplicates()
+    
+    if 'manufacturer' in planes.columns and 'tailnum' in planes.columns:
+        if verbose:
+            print("Found manufacturer column in planes data")
+            print("BEFORE MERGING - Unique manufacturers in planes data:")
+            print(planes['manufacturer'].value_counts())
+        
+        # Normalize manufacturer names
+        manufacturer_mapping = {
+            'AIRBUS': 'AIRBUS',
+            'AIRBUS INDUSTRIE': 'AIRBUS',
+            'AIRBUS SAS': 'AIRBUS',
+            'AIRBUS CANADA LTD PTNRSP': 'AIRBUS',
+            'C SERIES AIRCRAFT LTD PTNRSP': 'BOMBARDIER',
+            'BOMBARDIER INC': 'BOMBARDIER',
+            'EMBRAER': 'EMBRAER',
+            'EMBRAER S A': 'EMBRAER',
+            'EMBRAER-EMPRESA BRASILEIRA DE': 'EMBRAER',
+            'BOEING': 'BOEING',
+            'EUROCOPTER DEUTSCHLAND GMBH': 'EUROCOPTER',
+            'DIAMOND AIRCRAFT IND INC': 'DIAMOND'
+        }
+        
+        # Apply the mapping directly to the manufacturer column in planes data
+        planes['manufacturer'] = planes['manufacturer'].map(manufacturer_mapping).fillna(planes['manufacturer'])
+        
+        if verbose:
+            print("AFTER NORMALIZATION - Unique manufacturers in planes data:")
+            print(planes['manufacturer'].value_counts())
+    
+    return planes
+
 def clean_flights_data(conn, verbose=False):
     """
     Clean the flights data from the database using the provided connection.
@@ -38,7 +74,7 @@ def clean_flights_data(conn, verbose=False):
 
     flights = flights.dropna()
     
-     # Remove duplicates
+    # Remove duplicates
     flights = flights.drop_duplicates()
 
     # Convert times to datetime
@@ -97,7 +133,7 @@ def clean_flights_data(conn, verbose=False):
         num_inconsistent = (~flights['is_consistent']).sum()
         print(f"Percentage of inconsistent flights: {num_inconsistent / len(flights) * 100:.2f}%")
 
-# Local arrival time adjustment
+    # Local arrival time adjustment
     airports = pd.read_csv("airports.csv")
     timezone_dict = dict(zip(airports['faa'], airports['tz']))
     utc_offset_to_tz = {
@@ -127,6 +163,7 @@ def clean_flights_data(conn, verbose=False):
     flights['arr_offset'] = flights['dest'].map(timezone_dict)
     flights['arr_time'] = pd.to_datetime(flights['arr_time'], errors='coerce')
     flights['local_arr_time'] = flights['arr_time'] - pd.to_timedelta(flights['dep_offset'], unit='h') + pd.to_timedelta(flights['arr_offset'], unit='h')
+
     if verbose:
         print(flights[['arr_time', 'local_arr_time', 'dep_offset', 'arr_offset']].head())
     

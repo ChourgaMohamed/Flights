@@ -8,7 +8,7 @@ import pandas as pd
 import os
 import shutil
 import tempfile
-from flights_project.part4.part4 import clean_flights_data
+from flights_project.part4.part4 import clean_flights_data, clean_planes_data
 
 # Define the path to the original database and CSV files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -57,9 +57,10 @@ def get_persistent_db_connection(db_path=DATABASE_PATH):
     shutil.copy(db_path, temp_db_file.name)
     
     conn = sqlite3.connect(temp_db_file.name, check_same_thread=False)
+    cleaned_planes = clean_planes_data(conn, verbose=False)
     cleaned_flights = clean_flights_data(conn, verbose=False)
     cleaned_flights.to_sql('flights', conn, if_exists='replace', index=False)
-    
+    cleaned_planes.to_sql('planes', conn, if_exists='replace', index=False)
     # Don't try to store the filename on the connection object
     # The temp file will be orphaned, but in a Streamlit app context
     # this is acceptable as the OS will clean it up eventually
