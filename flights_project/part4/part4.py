@@ -4,8 +4,22 @@ import numpy as np
 from datetime import datetime, timedelta
 
 def convert_times_to_datetime(df):
+    """
+    Convert year, month, day columns to a datetime column
+    """
     try:
-        df['date'] = pd.to_datetime(df[['year', 'month', 'day']])
+        # Make sure df is a DataFrame
+        if isinstance(df, list):
+            column_names = ['year', 'month', 'day']  # Add all column names here
+            df = pd.DataFrame(df, columns=column_names)
+        
+        # Create date column if necessary columns exist
+        if all(col in df.columns for col in ['year', 'month', 'day']):
+            df['date'] = pd.to_datetime({
+                'year': df['year'],
+                'month': df['month'],
+                'day': df['day']
+            })
     except KeyError as e:
         print(f"Missing required column: {e}")
     except Exception as e:
@@ -187,6 +201,40 @@ def time_to_timedelta(time):
         return timedelta(hours=hours, minutes=minutes)
     except (ValueError, TypeError):
         return pd.NaT
+
+def prepare_data_for_analysis(data, data_type):
+    """
+    Convert list data from SQL queries into properly formatted DataFrames
+    """
+    # Convert to DataFrame if it's a list
+    if isinstance(data, list):
+        if data_type == 'flights':
+            columns = ['year', 'month', 'day', 'dep_time', 'sched_dep_time', 'dep_delay',
+                      'arr_time', 'sched_arr_time', 'arr_delay', 'carrier', 'flight', 
+                      'tailnum', 'origin', 'dest', 'air_time', 'distance', 'hour', 
+                      'minute', 'time_hour']  
+            df = pd.DataFrame(data, columns=columns)
+        elif data_type == 'weather':
+            columns = ['origin', 'year', 'month', 'day', 'hour', 'temp', 'dewp',
+                      'humid', 'wind_dir', 'wind_speed', 'wind_gust', 'precip',
+                      'pressure', 'visib', 'time_hour'] 
+            df = pd.DataFrame(data, columns=columns)
+        else:
+            raise ValueError(f"Unknown data_type: {data_type}")
+    elif isinstance(data, pd.DataFrame):
+        df = data  # Already a DataFrame
+    else:
+        raise TypeError(f"Data must be a DataFrame or list, not {type(data)}")
+    
+    # Ensure date column exists in all cases
+    if all(col in df.columns for col in ['year', 'month', 'day']):
+        df['date'] = pd.to_datetime({
+            'year': df['year'],
+            'month': df['month'],
+            'day': df['day']
+        })
+        
+    return df
 
 if __name__ == "__main__":
     conn = sqlite3.connect("flights_database.db", check_same_thread=False)

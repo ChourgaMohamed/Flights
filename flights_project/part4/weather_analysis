@@ -1,0 +1,140 @@
+import sqlite3
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from flights_project.part4 import part4
+from flights_project import utils
+
+# Part4 - further analysis
+conn = utils.get_persistent_db_connection("flights_database.db")
+
+# Change this to directly get DataFrames instead of lists of tuples
+query = "SELECT * FROM flights"
+flights = pd.read_sql_query(query, conn)  # Use pandas to read directly as DataFrame
+
+query = "SELECT * FROM weather"
+weather = pd.read_sql_query(query, conn)  # Use pandas to read directly as DataFrame
+
+# Now convert dates - modify this function if needed
+flights = part4.prepare_data_for_analysis(flights, 'flights')
+weather = part4.prepare_data_for_analysis(weather, 'weather')
+
+
+# Analyzes the effect of wind speed and precipitation on different plane types.
+def analyze_weather_effect_on_planes(flights, weather):
+    # Convert both to DataFrames if they're not already
+    if isinstance(flights, list):
+        flights_df = pd.DataFrame(flights)
+    else:
+        flights_df = flights
+        
+    if isinstance(weather, list):
+        weather_df = pd.DataFrame(weather)
+    else:
+        weather_df = weather
+    
+    # Make sure both DataFrames have the required columns for the merge
+    if 'date' not in flights_df.columns or 'origin' not in flights_df.columns:
+        print("flights_df is missing required columns for merge")
+        return None
+        
+    if 'date' not in weather_df.columns or 'origin' not in weather_df.columns:
+        print("weather_df is missing required columns for merge")
+        return None
+    
+    # Now perform the merge
+    merged_df = pd.merge(flights_df, weather_df, on=['date', 'origin'])
+
+    plane_weather_wind_speed = merged_df.groupby(['wind_speed', 'carrier'])['arr_delay'].mean().reset_index()
+    plane_weather_precip = merged_df.groupby(['precip','carrier'])['arr_delay'].mean().reset_index()
+
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=plane_weather_wind_speed, x='wind_speed', y='arr_delay', hue='carrier' )
+    plt.title('Effect of Wind Speed on Delay by Carrier')
+    plt.xlabel('Wind Speed (mph)')
+    plt.ylabel('Average Arrival Delay (minutes)')
+    plt.legend(title='Carrier')
+    plt.show()
+
+    sns.scatterplot(data=plane_weather_precip, x='precip', y='arr_delay', hue='carrier')
+    plt.title('Effect of Precipitation on Delay by Carrier')
+    plt.xlabel('Precipitations')
+    plt.ylabel('Average Arrival Delay (minutes)')
+    plt.legend(title='Carrier')
+    plt.show()
+
+
+
+def analyze_delays_by_airport(flights):
+    airport_delays = flights.groupby(['origin'])[['dep_delay', 'arr_delay']].mean().reset_index()
+    airport_delays = airport_delays.rename(
+        columns={'origin': 'airport', 'dep_delay': 'avg_dep_delay', 'arr_delay': 'avg_arr_delay'})
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=airport_delays, x='airport', y='avg_dep_delay', color='blue', label='Departure Delay')
+    sns.barplot(data=airport_delays, x='airport', y='avg_arr_delay', color='orange', label='Arrival Delay')
+    plt.xlabel('Airport')
+    plt.ylabel('Average Delay (minutes)')
+    plt.title('Average Delays by Departure/Arrival Airports')
+    plt.legend()
+    plt.show()
+
+    return airport_delays
+
+def popular_routes_from_nyc(flights):
+    nyc_airports = ['JFK', 'LGA', 'EWR']
+    nyc_flights = flights[flights['origin'].isin(nyc_airports)]
+
+    route_counts = nyc_flights.groupby(['origin', 'dest']).size().reset_index(name='flight_count')
+    route_counts = route_counts.sort_values('flight_count', ascending=False).head(10)
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=route_counts, x='flight_count', y='dest', hue='origin', dodge=False)
+    plt.xlabel('Number of Flights')
+    plt.ylabel('Destination')
+    plt.title('Most Frequent Routes from NYC Airports')
+    plt.legend(title='Origin')
+    plt.show()
+
+    return route_counts
+
+def weather_influence_on_delays(flights, weather):
+
+    merged_df = pd.merge(flights, weather, on=['date', 'origin'])
+    delay_weather_corr = merged_df[['dep_delay', 'arr_delay', 'temp', 'humid', 'wind_speed', 'precip']].corr()
+
+    plt.figure(figsize=(12, 6))
+    sns.scatterplot(data=merged_df, x='wind_speed', y='dep_delay', alpha=0.5)
+    plt.title('Departure Delays vs. Wind Speed')
+    plt.xlabel('Wind Speed (mph)')
+    plt.ylabel('Departure Delay (minutes)')
+    plt.show()
+
+    return delay_weather_corr
+
+def frequent_carriers_from_nyc(flights):
+    nyc_airports = ['JFK', 'LGA', 'EWR']
+    nyc_flights = flights[flights['origin'].isin(nyc_airports)]
+
+    carrier_counts = nyc_flights.groupby('carrier').size().reset_index(name='flight_count')
+    carrier_counts = carrier_counts.sort_values('flight_count', ascending=False)
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=carrier_counts, x='carrier', y='flight_count', palette='coolwarm')
+    plt.xlabel('Carrier')
+    plt.ylabel('Number of Flights')
+    plt.title('Most Frequent Carriers from NYC Airports')
+    plt.show()
+
+    return carrier_counts
+
+analyze_weather_effect_on_planes(flights, weather) 
+delays_by_airport = analyze_delays_by_airport(flights)
+popular_routes = popular_routes_from_nyc(flights)
+weather_correlation = weather_influence_on_delays(flights, weather)
+carriers_from_nyc = frequent_carriers_from_nyc(flights)
+
+print("Delays by Airport:\n", delays_by_airport)
+print("Popular Routes from NYC:\n", popular_routes)
+print("Correlation between Weather and Delays:\n", weather_correlation)
+print("Frequent Carriers from NYC:\n", carriers_from_nyc)
