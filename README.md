@@ -42,7 +42,7 @@ In our project, we have chosen a program structure that facilitates the executio
 
 ## Requirements
 
-This project requires **Python 3.12.9, SQLite3, Pandas, Seaborn, Matplotlib** installed and the dependencies listed in `requirements.txt`.
+This project requires **Python 3.12.9** and the dependencies listed in `requirements.txt`.
 
 ### Installation
 1. **Install Python Dependencies**
@@ -67,6 +67,8 @@ This project requires **Python 3.12.9, SQLite3, Pandas, Seaborn, Matplotlib** in
    ```bash
    pip install -e .
    ```
+
+   Note that you may need to fully close all terminals and restart after this step to be able to continue
 
 4. **Run the Streamlit App**
 
