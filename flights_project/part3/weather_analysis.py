@@ -6,7 +6,6 @@ Includes functions for flight direction calculation, wind alignment analysis,
 and inner product analysis between flight direction and wind speed.
 """
 
-import sqlite3
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

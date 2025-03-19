@@ -30,7 +30,7 @@ def plot_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="Airports, in the Dataset (Color Coded by Altitude)",
+        title="Airports, in the Dataset (Color Coded by Altitude in Feet)",
         color=df["alt"],  # Color by altitude
         color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
@@ -55,7 +55,7 @@ def plot_us_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="Northern American Airports (Color Coded by Altitude)",
+        title="Northern American Airports (Color Coded by Altitude in Feet)",
         color=us_airports["alt"],  # Color by altitude
         color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
@@ -86,7 +86,7 @@ def plot_non_us_airports():
         lat="lat",
         lon="lon",
         hover_name="name",
-        title="non-Northern American Airports (Color Coded by Altitude)",
+        title="non-Northern American Airports (Color Coded by Altitudein Feet)",
         color=non_us_airports["alt"],  # Color by altitude
         color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )

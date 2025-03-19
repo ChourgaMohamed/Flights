@@ -8,9 +8,8 @@ plotting top destinations, flight statistics, and delay analysis.
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
+import plotly.graph_objects as go
 from flights_project import utils
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -28,17 +27,10 @@ def haversine(lat1, lon1, lat2, lon2):
 
 def get_departure_origins(conn=None):
     """
-    Retrieve unique departure origins from the flights table and return as a DataFrame with airport names from the airports database.
+    Retrieve unique departure origins from the flights table and return as a DataFrame with airport names.
     """
-    query_origins = """
-    SELECT DISTINCT origin
-    FROM flights;
-    """
-    query_airports = """
-    SELECT faa, name
-    FROM airports;
-    """
-    
+    query_origins = "SELECT DISTINCT origin FROM flights;"
+    query_airports = "SELECT faa, name FROM airports;"
     if conn is None:
         with utils.get_db_connection() as conn:
             df_origins = pd.read_sql(query_origins, conn)
@@ -46,7 +38,6 @@ def get_departure_origins(conn=None):
     else:
         df_origins = pd.read_sql(query_origins, conn)
         df_airports = pd.read_sql(query_airports, conn)
-    
     df_origins = df_origins.rename(columns={"origin": "faa"})
     df_origins = df_origins.merge(df_airports, on="faa", how="left")
     return df_origins
@@ -75,11 +66,7 @@ def get_nyc_flights(conn=None):
     """
     Retrieve flights departing from NYC airports.
     """
-    query = """
-    SELECT *
-    FROM flights
-    WHERE origin IN ('JFK', 'LGA', 'EWR');
-    """
+    query = "SELECT * FROM flights WHERE origin IN ('JFK', 'LGA', 'EWR');"
     if conn is None:
         with utils.get_db_connection() as conn:
             df = pd.read_sql(query, conn)
@@ -89,7 +76,7 @@ def get_nyc_flights(conn=None):
 
 def plot_top_nyc_destinations(conn=None):
     """
-    Plot top 10 flight destinations from NYC airports.
+    Plot top 10 flight destinations from NYC airports using a Plotly Express bar chart.
     """
     query = """
     SELECT dest, COUNT(*) AS flight_count
@@ -104,11 +91,15 @@ def plot_top_nyc_destinations(conn=None):
     else:
         df = pd.read_sql(query, conn)
     top10 = df.head(10)
-    fig, ax = plt.subplots(figsize=(10,6))
-    ax.bar(top10["dest"], top10["flight_count"], color="royalblue", edgecolor="black")
-    ax.set_xlabel("Destination Airport")
-    ax.set_ylabel("Number of Flights")
-    plt.xticks(rotation=45)
+    fig = px.bar(
+        top10,
+        x="dest",
+        y="flight_count",
+        title="Top 10 NYC Destinations",
+        labels={"dest": "Destination Airport", "flight_count": "Number of Flights"},
+        color_discrete_sequence=[utils.COLOR_PALETTE["pigment_green"]]
+    )
+    fig.update_xaxes(tickangle=45)
     return fig
 
 def plot_flight_destinations(origin, month, day, conn=None):
@@ -127,10 +118,14 @@ def plot_flight_destinations(origin, month, day, conn=None):
             df = pd.read_sql(query, conn, params=params)
     else:
         df = pd.read_sql(query, conn, params=params)
-    fig = px.scatter_geo(df, lat="lat", lon="lon",
-                         hover_name="dest",
-                         title=f"Flight Destinations from {origin} on {month}/{day}",
-                         projection="natural earth")
+    fig = px.scatter_geo(
+        df,
+        lat="lat",
+        lon="lon",
+        hover_name="dest",
+        title=f"Flight Destinations from {origin} on {month}/{day}",
+        projection="natural earth"
+    )
     fig.show()
     return fig
 
@@ -187,7 +182,7 @@ def get_plane_type_counts(origin, dest, conn=None):
 
 def plot_avg_dep_delay(conn=None):
     """
-    Plot average departure delay per airline.
+    Plot average departure delay per airline using Plotly Express.
     """
     query = """
     SELECT a.name AS airline, AVG(f.dep_delay) AS avg_delay
@@ -201,12 +196,15 @@ def plot_avg_dep_delay(conn=None):
             df_delays = pd.read_sql(query, conn)
     else:
         df_delays = pd.read_sql(query, conn)
-    fig, ax = plt.subplots(figsize=(12,6))
-    ax.bar(df_delays["airline"], df_delays["avg_delay"], color="red", edgecolor="black")
-    ax.set_xlabel("Airline")
-    ax.set_ylabel("Avg Departure Delay (minutes)")
-    ax.set_title("Average Departure Delay per Airline")
-    plt.xticks(rotation=90)
+    fig = px.bar(
+        df_delays,
+        x="airline",
+        y="avg_delay",
+        title="Average Departure Delay per Airline",
+        labels={"airline": "Airline", "avg_delay": "Avg Departure Delay (minutes)"},
+        color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]
+    )
+    fig.update_xaxes(tickangle=90)
     return fig
 
 def count_delayed_flights(start_month, end_month, destination, conn=None):
@@ -229,7 +227,7 @@ def count_delayed_flights(start_month, end_month, destination, conn=None):
 def analyze_distance_vs_arrival_delay(conn=None):
     """
     Analyze the relationship between flight distance and arrival delay.
-    Prints the correlation coefficient and plots a scatter plot with a regression line.
+    Prints the correlation coefficient and returns a Plotly Express scatter plot with an OLS trendline.
     """
     query = """
     SELECT distance, arr_delay
@@ -244,14 +242,16 @@ def analyze_distance_vs_arrival_delay(conn=None):
     df = df.dropna()
     correlation = df["distance"].corr(df["arr_delay"])
     print(f"📊 Correlation between flight distance and arrival delay: {correlation:.3f}")
-    plt.figure(figsize=(10,6))
-    sns.regplot(x="distance", y="arr_delay", data=df, scatter_kws={'alpha':0.5}, line_kws={"color":"red"})
-    plt.xlabel("Flight Distance (miles)")
-    plt.ylabel("Arrival Delay (minutes)")
-    plt.title("Relationship Between Flight Distance and Arrival Delay")
-    plt.grid()
-    plt.show()
-    return correlation
+    fig = px.scatter(
+        df,
+        x="distance",
+        y="arr_delay",
+        trendline="ols",
+        opacity=0.5,
+        title="Relationship Between Flight Distance and Arrival Delay",
+        labels={"distance": "Flight Distance (miles)", "arr_delay": "Arrival Delay (minutes)"}
+    )
+    return correlation, fig
 
 def compute_avg_speed_per_plane_model(conn=None):
     """
@@ -277,17 +277,7 @@ def verify_distance_computation(conn=None):
     """
     Verify that the computed geodesic distances (using the haversine formula)
     roughly match the 'distance' column in the flights table.
-    
-    This function retrieves a sample of flights, computes the haversine distance 
-    between the departure and arrival airports, and compares it to the stored 
-    distance value from the database.
-    
-    Args:
-        conn (sqlite3.Connection, optional): An existing database connection.
-        
-    Returns:
-        df (DataFrame): A DataFrame containing the database distance, computed distance,
-                        the absolute difference, and the relative error.
+    Returns a Plotly Express scatter plot comparing database vs. computed distances.
     """
     query = """
     SELECT f.distance as db_distance, a1.lat AS dep_lat, a1.lon AS dep_lon,
@@ -308,38 +298,40 @@ def verify_distance_computation(conn=None):
         lambda row: haversine(row["dep_lat"], row["dep_lon"], row["arr_lat"], row["arr_lon"]),
         axis=1
     )
-    # Compute the absolute difference and relative error
     df["difference"] = df["db_distance"] - df["computed_distance"]
     df["relative_error"] = abs(df["difference"] / df["db_distance"])
     
-    # Print summary statistics
     mean_diff = df["difference"].abs().mean()
     mean_rel_err = df["relative_error"].mean()
     print(f"Mean absolute difference: {mean_diff:.2f} km")
     print(f"Mean relative error: {mean_rel_err:.2%}")
     
-    # Scatter plot to visually compare database vs computed distances
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(8,6))
-    plt.scatter(df["db_distance"], df["computed_distance"], alpha=0.5)
-    plt.xlabel("Database Distance (km)")
-    plt.ylabel("Computed Distance (km)")
-    plt.title("Database vs Computed Distance")
-    # Plot y=x line for reference
+    fig = px.scatter(
+        df,
+        x="db_distance",
+        y="computed_distance",
+        opacity=0.5,
+        title="Database vs Computed Distance",
+        labels={"db_distance": "Database Distance (km)", "computed_distance": "Computed Distance (km)"}
+    )
+    # Add a reference line y=x using Plotly Graph Objects
     min_val = min(df["db_distance"].min(), df["computed_distance"].min())
     max_val = max(df["db_distance"].max(), df["computed_distance"].max())
-    plt.plot([min_val, max_val], [min_val, max_val], 'r--')
-    plt.show()
-    
-    return df
+    line = go.Scatter(
+        x=[min_val, max_val],
+        y=[min_val, max_val],
+        mode="lines",
+        line=dict(color=utils.COLOR_PALETTE["pakistan_green"], dash="dash"),
+        name="y = x"
+    )
+    fig.add_trace(line)
+    return fig
 
 def main():
-    # Print the departure origins
     print("All Departure Origins in Database:")
     origins = get_departure_origins()
     print(origins)
 
-    """Run flight analysis functions."""
     print("Sample Flight Data:")
     print_sample_flights()
     
@@ -349,7 +341,7 @@ def main():
     
     print("\nPlotting Top 10 NYC Destinations...")
     fig1 = plot_top_nyc_destinations()
-    plt.show()
+    fig1.show()
     
     print("\nPlotting Flight Destinations from JFK on 1/1...")
     plot_flight_destinations("JFK", 1, 1)
@@ -362,19 +354,22 @@ def main():
     
     print("\nPlotting Average Departure Delay per Airline...")
     fig2 = plot_avg_dep_delay()
-    plt.show()
+    fig2.show()
     
     print("\nCounting Delayed Flights to LAX from Jan to Mar:")
     count_delayed_flights(1, 3, "LAX")
     
     print("\nAnalyzing Distance vs Arrival Delay:")
-    analyze_distance_vs_arrival_delay()
+    corr, fig3 = analyze_distance_vs_arrival_delay()
+    print(f"Correlation: {corr:.3f}")
+    fig3.show()
     
     print("\nComputing Average Speed per Plane Model:")
     compute_avg_speed_per_plane_model()
 
     print("\nVerifying computed distances against the database values...")
-    verify_distance_computation()
+    fig4 = verify_distance_computation()
+    fig4.show()
 
 if __name__ == "__main__":
     main()

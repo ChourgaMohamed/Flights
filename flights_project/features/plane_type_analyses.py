@@ -64,16 +64,11 @@ def analyze_correlations(df):
     print(corr_matrix)
     
     # Create a custom colorscale using the palette:
-    custom_colorscale = [
-        [0, utils.COLOR_PALETTE["nyanza"]],
-        [0.5, utils.COLOR_PALETTE["light_green"]],
-        [1, utils.COLOR_PALETTE["pakistan_green"]]
-    ]
     
     fig = px.imshow(
         corr_matrix,
         text_auto=True,
-        color_continuous_scale=custom_colorscale,
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE,
         title="Correlation Matrix for Plane and Flight Variables"
     )
     return fig
@@ -191,6 +186,47 @@ def plot_model_distance_year(df):
     )
     return fig
 
+def plot_violin_distance_by_engine(conn=None):
+    """
+    Create a violin plot of flight distance by engine type for 'Turbo-fan' and 'Turbo-jet'
+    using Plotly Express.
+    
+    This function joins the flights and planes tables to retrieve flight distance and engine type,
+    filters the data to only include 'Turbo-fan' and 'Turbo-jet', and then creates a violin plot.
+    A low bandwidth (5) is used (set on the underlying traces) to enforce strict smoothing.
+    
+    Returns the Plotly figure.
+    """
+    query = """
+    SELECT p.engine, f.distance
+    FROM flights f
+    JOIN planes p ON f.tailnum = p.tailnum
+    WHERE f.distance IS NOT NULL 
+      AND p.engine IN ('Turbo-fan', 'Turbo-jet')
+    """
+    if conn is None:
+        with utils.get_db_connection() as conn:
+            df = pd.read_sql(query, conn)
+    else:
+        df = pd.read_sql(query, conn)
+    
+    # Create the violin plot without the 'color' argument.
+    fig = px.violin(
+        df,
+        x="engine",
+        y="distance",
+        box=True,
+        # points="all",
+        title="Flight Distance by Engine Type",
+        category_orders={"engine": ["Turbo-fan", "Turbo-jet"]},
+        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]]
+    )
+    
+    fig.update_layout(xaxis_title="Engine Type", yaxis_title="Flight Distance")
+    return fig
+
+
+
 def main():
     # Retrieve the data and print the first few rows
     df = get_plane_flight_data()
@@ -201,11 +237,13 @@ def main():
     fig_corr = analyze_correlations(df)
     fig_scatter = plot_scatter_plots(df)
     fig_model = plot_model_distance_year(df)
+    fig_violin = plot_violin_distance_by_engine()
     
     # Display the figures
     fig_corr.show()
     fig_scatter.show()
     fig_model.show()
+    fig_violin.show()
 
 if __name__ == "__main__":
     main()
