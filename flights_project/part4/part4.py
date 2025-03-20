@@ -12,6 +12,43 @@ def convert_times_to_datetime(df):
         print(f"An error occurred while combining columns to datetime: {e}")
     return df
 
+def clean_planes_data(conn, verbose=False):
+    planes = pd.read_sql_query("SELECT * FROM planes", conn)
+    planes = planes.dropna()
+    planes = planes.drop_duplicates()
+
+    if 'manufacturer' in planes.columns and 'tailnum' in planes.columns:
+        if verbose:
+            print("Found manufacturer column in planes data")
+            print("BEFORE MERGING - Unique manufacturers in planes data:")
+            print(planes['manufacturer'].value_counts())
+
+        # Normalize manufacturer names
+        manufacturer_mapping = {
+            'AIRBUS': 'AIRBUS',
+            'AIRBUS INDUSTRIE': 'AIRBUS',
+            'AIRBUS SAS': 'AIRBUS',
+            'AIRBUS CANADA LTD PTNRSP': 'AIRBUS',
+            'C SERIES AIRCRAFT LTD PTNRSP': 'BOMBARDIER',
+            'BOMBARDIER INC': 'BOMBARDIER',
+            'EMBRAER': 'EMBRAER',
+            'EMBRAER S A': 'EMBRAER',
+            'EMBRAER-EMPRESA BRASILEIRA DE': 'EMBRAER',
+            'BOEING': 'BOEING',
+            'EUROCOPTER DEUTSCHLAND GMBH': 'EUROCOPTER',
+            'DIAMOND AIRCRAFT IND INC': 'DIAMOND'
+        }
+
+        # Apply the mapping directly to the manufacturer column in planes data
+        planes['manufacturer'] = planes['manufacturer'].map(manufacturer_mapping).fillna(planes['manufacturer'])
+
+        if verbose:
+            print("AFTER NORMALIZATION - Unique manufacturers in planes data:")
+            print(planes['manufacturer'].value_counts())
+
+    return planes
+
+
 def clean_flights_data(conn, verbose=False):
     """
     Clean the flights data from the database using the provided connection.
