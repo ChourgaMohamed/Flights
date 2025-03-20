@@ -303,14 +303,15 @@ def verify_distance_computation(conn=None):
     
     mean_diff = df["difference"].abs().mean()
     mean_rel_err = df["relative_error"].mean()
-    print(f"Mean absolute difference: {mean_diff:.2f} km")
-    print(f"Mean relative error: {mean_rel_err:.2%}")
+    text1=(f"Mean absolute difference: {mean_diff:.2f} km")
+    text2=(f"Mean relative error: {mean_rel_err:.2%}")
     
     fig = px.scatter(
         df,
         x="db_distance",
         y="computed_distance",
         opacity=0.5,
+        color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]],
         title="Database vs Computed Distance",
         labels={"db_distance": "Database Distance (km)", "computed_distance": "Computed Distance (km)"}
     )
@@ -325,7 +326,7 @@ def verify_distance_computation(conn=None):
         name="y = x"
     )
     fig.add_trace(line)
-    return fig
+    return fig, text1, text2
 
 def main():
     print("All Departure Origins in Database:")
@@ -368,8 +369,10 @@ def main():
     compute_avg_speed_per_plane_model()
 
     print("\nVerifying computed distances against the database values...")
-    fig4 = verify_distance_computation()
+    fig4, text1,text2 = verify_distance_computation()
     fig4.show()
+    print(text1)
+    print(text2)
 
 if __name__ == "__main__":
     main()

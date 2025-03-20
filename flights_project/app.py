@@ -7,7 +7,7 @@ Uses a single database connection (opened once and passed to subfunctions).
 import streamlit as st
 from flights_project import utils
 from part1 import plot_routes, plot_airports
-from part3 import delays_analysis, manufacturers_analysis
+from part3 import delays_analysis, manufacturers_analysis, flight_statistics, flight_analysis
 from features import airline_comparison, heatmap_analysis
 
 # Initialize (or reuse) a persistent database connection in session_state
@@ -26,7 +26,7 @@ st.write("Interactive dashboard to explore flight data.")
 
 # Sidebar navigation
 option = st.sidebar.selectbox("Select Analysis", 
-                              ("Global Airports Map", "US Airports Map", 
+                              ("Global Airports Map", "Northern America Airports Map", 
                                "Flight Route", "Delay Analysis", 
                                "Manufacturer Analysis", "Flight Statistics", "Airline Comparison", "Heatmap Analysis"))
 
@@ -35,8 +35,8 @@ if option == "Global Airports Map":
     fig = plot_airports.plot_airports()
     st.plotly_chart(fig)
 
-elif option == "US Airports Map":
-    st.subheader("US Airports Map")
+elif option == "Northern America Airports Map":
+    st.subheader("Northern America Airports Map")
     fig = plot_airports.plot_us_airports()
     st.plotly_chart(fig)
 
@@ -53,7 +53,7 @@ elif option == "Delay Analysis":
     st.subheader("Flight Delay Analysis")
     st.write("Delay histogram")
     fig = delays_analysis.plot_delay_histogram(conn=db_conn)
-    st.pyplot(fig)
+    st.plotly_chart(fig)
 
 elif option == "Manufacturer Analysis":
     st.subheader("Aircraft Manufacturer Analysis")
@@ -65,20 +65,22 @@ elif option == "Manufacturer Analysis":
             if isinstance(result, str):
                 st.write(result)
             else:
-                st.pyplot(result)
+                st.plotly_chart(result)
 
 
-# elif option == "Flight Statistics":
-#     st.subheader("General Flight Statistics")
-#     total = flight_statistics.get_total_flights(conn=db_conn)
-#     st.write(f"Total Flights: {total}")
-#     busiest = flight_statistics.get_busiest_airports(conn=db_conn)
-#     st.write("Busiest Airports:")
-#     for row in busiest:
-#         st.write(f"Airport: {row[0]}, Flights: {row[1]}")
-#     st.subheader("Distance Analysis")
-#     fig = distance_analysis.plot_distance_histograms()
-#     st.pyplot(fig)
+elif option == "Flight Statistics":
+    st.subheader("General Flight Statistics")
+    total = flight_statistics.get_total_flights(conn=db_conn)
+    st.write(f"Total Flights: {total}")
+    busiest = flight_statistics.get_busiest_airports(conn=db_conn)
+    st.write("Busiest Airports:")
+    for row in busiest:
+        st.write(f"Airport: {row[0]}, Flights: {row[1]}")
+    st.subheader("Distance Verification Analysis")
+    fig, text1, text2 = flight_analysis.verify_distance_computation(conn=db_conn)
+    st.plotly_chart(fig)
+    st.write(text1)
+    st.write(text2)
 
 elif option == "Airline Comparison":
     st.subheader("Airline Performance Comparison - Spider Chart")
