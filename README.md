@@ -1,5 +1,10 @@
-# Flight Information Dashboard
-
+# Flights Information Dashboard
+## Table of contents
+- [Overview](#overview)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Dashboard](#dashboard)
 ## Team members
 
 Pepijn de Veer, Pedro Cristos Martinez, Laurens Robbe, Mohamed Chourga
@@ -63,6 +68,8 @@ This project requires **Python 3.12.9** and the dependencies listed in `requirem
    pip install -e .
    ```
 
+   Note that you may need to fully close all terminals and restart after this step to be able to continue
+
 4. **Run the Streamlit App**
 
    Navigate to the project directory and launch the app with:
@@ -71,3 +78,7 @@ This project requires **Python 3.12.9** and the dependencies listed in `requirem
    streamlit run ./flights_project/app.py
    ```
 
+## Dashboard
+
+To visualize the dashboard you follow the step 4 above and the final interactive dashboard is prompted in an external internet
+application. The dashboard has interesting features that you can have a look at so feel free to navigate through it.

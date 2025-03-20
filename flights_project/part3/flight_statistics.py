@@ -24,10 +24,13 @@ def get_busiest_airports(n=5, conn=None):
     return result
 
 def main():
+    # Open persistent connection
+    conn = utils.get_persistent_db_connection()
+
     """Run flight statistics computations (opens its own DB connection if none provided)."""
-    total = get_total_flights()
+    total = get_total_flights(conn)
     print(f"Total flights: {total}")
-    busiest = get_busiest_airports()
+    busiest = get_busiest_airports(conn=conn)
     print("Busiest Airports (top 5):")
     for row in busiest:
         print(f"Airport: {row[0]}, Flights: {row[1]}")

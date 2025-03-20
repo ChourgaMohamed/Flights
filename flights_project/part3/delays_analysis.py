@@ -3,7 +3,7 @@ This module analyzes flight delays from the flights database.
 Uses the shared DB helpers in utils.
 """
 
-import matplotlib.pyplot as plt
+import plotly.express as px
 from flights_project import utils
 
 def get_delay_data(conn=None):
@@ -17,20 +17,25 @@ def get_delay_data(conn=None):
     data = utils.execute_query(query, fetch='all', conn=conn)
     return [row[0] for row in data]
 
+
 def plot_delay_histogram(conn=None):
     delays = get_delay_data(conn)
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(delays, bins=30, edgecolor="black")
-    ax.set_xlabel("Departure Delay (minutes)")
-    ax.set_ylabel("Number of Flights")
-    ax.set_title("Distribution of Flight Departure Delays")
+    fig = px.histogram(
+        x=delays,
+        range_x=[-20, 300],
+        title="Distribution of Flight Departure Delays",
+        labels={'x': "Departure Delay (minutes)", 'y': "Number of Flights"},
+        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]]
+    )
     return fig
 
-
 def main():
+    # Opening a persistent connection
+    conn = utils.get_persistent_db_connection
+
     """Run delay analysis (opens its own DB connection if none provided)."""
-    plot_delay_histogram()
-    plt.show()
+    fig = plot_delay_histogram(conn)
+    fig.show()
 
 if __name__ == "__main__":
     main()
