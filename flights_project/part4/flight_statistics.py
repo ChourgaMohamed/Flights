@@ -13,7 +13,7 @@ def get_flight_statistics(dep_airport, arr_airport, conn=None):
         average departure delay, air time, and arrival delay.
     """
     if conn is None:
-        conn = utils.get_db_connection()
+        conn = utils.get_persistent_db_connection()
     query = """
     SELECT COUNT(*) AS total_flights,
            AVG(dep_delay) AS avg_departure_delay,
@@ -22,7 +22,7 @@ def get_flight_statistics(dep_airport, arr_airport, conn=None):
     FROM flights
     WHERE origin = ? AND dest = ?
     """
-    result = utils.execute_query(query, conn, params=(dep_airport, arr_airport))
+    result = utils.execute_query(query, params=(dep_airport, arr_airport), fetch="all", conn=conn)
     text = f"Flight statistics for {dep_airport} → {arr_airport}"
     return text, result
 
@@ -34,7 +34,7 @@ def delay_histogram(airport, start_date, end_date, conn=None):
         A Plotly figure.
     """
     if conn is None:
-        conn = utils.get_db_connection()
+        conn = utils.get_persistent_db_connection()
     query = """
     SELECT dep_delay, arr_delay
     FROM flights
@@ -95,7 +95,7 @@ def get_nyc_flight_statistics(conn=None):
     """
     nyc_airports = ["JFK", "LGA", "EWR"]
     if conn is None:
-        conn = utils.get_db_connection()
+        conn = utils.get_persistent_db_connection()
     
     query_total = """
     SELECT COUNT(*) AS total_nyc_flights
@@ -120,22 +120,31 @@ def get_nyc_flight_statistics(conn=None):
     return total_flights.iloc[0, 0], flights_per_airport
 
 def main():
-    # fig = delay_histogram("JFK", "2023-01-01", "2023-01-31")
-    # if isinstance(fig, str):
-    #     print(fig)
-    # else:
-    #     fig.show()
+    # Get persistent database connection
+    conn = utils.get_persistent_db_connection()
+
+    ######
+    # Example usage of functions
+    ######
+
+    # Plot delay histogram for JFK airport in January 2023
+    fig = delay_histogram("JFK", "2023-01-01", "2023-01-31", conn)
+    if isinstance(fig, str):
+        print(fig)
+    else:
+        fig.show()
 
     # Get flight statistics for JFK to LAX route
-    text, stats = get_flight_statistics("JFK", "LAX")
+    text, result = get_flight_statistics("JFK", "LAX",conn)
     print(text)
-    print(stats)
+    print(result)
 
-    # # Get NYC flight statistics for 2023
-    # total, per_airport = get_nyc_flight_statistics()
-    # print("Total flights:", total)
-    # print("Flights per airport:")
-    # print(per_airport)
+    # Get NYC flight statistics for 2023
+    total, per_airport = get_nyc_flight_statistics(conn)
+    print("Total flights:", total)
+    print("Flights per airport:")
+    print(per_airport)
+
 
 if __name__ == "__main__":
     main()

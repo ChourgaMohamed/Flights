@@ -30,8 +30,11 @@ def plot_delay_histogram(conn=None):
     return fig
 
 def main():
+    # Opening a persistent connection
+    conn = utils.get_persistent_db_connection
+
     """Run delay analysis (opens its own DB connection if none provided)."""
-    fig = plot_delay_histogram()
+    fig = plot_delay_histogram(conn)
     fig.show()
 
 if __name__ == "__main__":

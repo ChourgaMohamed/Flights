@@ -41,7 +41,7 @@ def plot_manufacturer_data(destination="LAX", conn=None):
         "Number of Flights": counts
     })
     
-    # Create bar chart with a color from the shared palette (e.g., pigment_green)
+    # Create bar chart with a color from the shared palette
     fig = px.bar(
         df,
         x="Manufacturer",

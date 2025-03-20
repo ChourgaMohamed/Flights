@@ -109,12 +109,15 @@ def analyze_inner_product_and_airtime(conn=None):
     return df
 
 def main():
+    # Opening a persistent connection
+    conn = utils.get_persistent_db_connection()
+
     """Run weather-related flight analyses."""
     print("Analyzing Wind Direction and Alignment...")
-    analyze_wind_direction()
+    analyze_wind_direction(conn)
     
     print("\nAnalyzing Inner Product and Air Time...")
-    analyze_inner_product_and_airtime()
+    analyze_inner_product_and_airtime(conn)
 
 if __name__ == "__main__":
     main()

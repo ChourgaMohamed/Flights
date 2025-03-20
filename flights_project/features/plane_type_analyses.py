@@ -228,8 +228,11 @@ def plot_violin_distance_by_engine(conn=None):
 
 
 def main():
+    # get persistent connection
+    conn = utils.get_persistent_db_connection()
+
     # Retrieve the data and print the first few rows
-    df = get_plane_flight_data()
+    df = get_plane_flight_data(conn=conn)
     print("First few rows of combined flight and plane data:")
     print(df.head())
     
@@ -237,7 +240,7 @@ def main():
     fig_corr = analyze_correlations(df)
     fig_scatter = plot_scatter_plots(df)
     fig_model = plot_model_distance_year(df)
-    fig_violin = plot_violin_distance_by_engine()
+    fig_violin = plot_violin_distance_by_engine(conn=conn)
     
     # Display the figures
     fig_corr.show()

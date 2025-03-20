@@ -3,34 +3,55 @@ import pandas as pd
 from flights_project import utils
 
 
-def plot_flight_route(faa_code):
+def plot_flight_route(dept_airport, arr_airport):
     """
-    Plot a flight route from NYC airport JFK to the target airport.
+    Plot a flight route from NYC airport to the target airport.
 
     Args:
-        faa_code (str): The FAA code of the target airport.
+        dept_airport (str): FAA code of the departure airport.
+        arr_airport (str): FAA code of the arrival airport.
     """
     df = utils.load_airports_data()
-    # Get JFK's data as a DataFrame row
-    nyc_airport = df[df["faa"] == "JFK"]
-    target_airport = df[df["faa"] == faa_code]
+    # Get departure airport's data as a DataFrame row
+    dept_airport_data = df[df["faa"] == dept_airport]
+    target_airport = df[df["faa"] == arr_airport]
 
     if target_airport.empty:
-        print(f"Airport with FAA code {faa_code} not found!")
+        print(f"Airport with FAA code {arr_airport} not found!")
         return
 
-    # Concatenate JFK and target airport for plotting
-    plot_data = pd.concat([nyc_airport, target_airport])
+    # Concatenate departure and target airport for plotting
+    plot_data = pd.concat([dept_airport_data, target_airport])
     fig = px.scatter_geo(
         plot_data, lat="lat", lon="lon",
         text="name",
         hover_name="name",
-        title=f"Route from NYC to {faa_code}",
+        title=f"Route from {dept_airport} to {arr_airport}",
         size_max=5,
-        opacity=0.6
+        opacity=0.6,
+        color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]
     )
-    # Draw a line from JFK to the target airport
-    fig.add_trace(px.line_geo(plot_data, lat="lat", lon="lon").data[0])
+    # Draw a line from departure to the target airport with the darkest color in the palette
+    fig.add_trace(px.line_geo(plot_data, lat="lat", lon="lon", line_dash_sequence=['solid'], color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]).data[0])
+    
+    # Autozoom to the selected route with a bit less zoom
+    fig.update_geos(fitbounds="locations", visible=False)
+    
+    # Remove the box around the plot and use custom color palette
+    fig.update_layout(
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            projection_type='equirectangular',
+            showland=True,
+            showcountries=True,
+            showlakes=True,
+            lakecolor=utils.COLOR_PALETTE["light_green"],
+            landcolor=utils.COLOR_PALETTE["nyanza"],
+            projection_scale=1.2  # Adjust this value to control zoom
+        ),
+    )
+    
     return fig
 
 

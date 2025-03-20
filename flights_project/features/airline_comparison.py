@@ -208,14 +208,18 @@ def main():
     """Example usage: show a spider chart with all carriers (that pass the filter)
        and print the top 3 carriers by flight count.
     """
-    fig = plot_airline_performance_spider()
+
+    # Opening a persistent connection
+    conn = utils.get_persistent_db_connection()
+
+    fig = plot_airline_performance_spider(conn=conn)
     if fig:
         fig.show()
     else:
         print("No data to plot.")
 
     # Also print top 3 carriers by flight count
-    print("Top 3 carriers:", get_top_carriers_by_flight_count(limit=3))
+    print("Top 3 carriers:", get_top_carriers_by_flight_count(limit=3, conn=conn))
 
 if __name__ == "__main__":
     main()

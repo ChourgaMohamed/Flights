@@ -329,47 +329,50 @@ def verify_distance_computation(conn=None):
     return fig, text1, text2
 
 def main():
+    # Opening an persistent connection to the database
+    conn = utils.get_persistent_db_connection()
+
     print("All Departure Origins in Database:")
-    origins = get_departure_origins()
+    origins = get_departure_origins(conn)
     print(origins)
 
     print("Sample Flight Data:")
-    print_sample_flights()
+    print_sample_flights(conn)
     
     print("\nNYC Flights (first 5 rows):")
     nyc_flights = get_nyc_flights()
     print(nyc_flights.head())
     
     print("\nPlotting Top 10 NYC Destinations...")
-    fig1 = plot_top_nyc_destinations()
+    fig1 = plot_top_nyc_destinations(conn)
     fig1.show()
     
     print("\nPlotting Flight Destinations from JFK on 1/1...")
-    plot_flight_destinations("JFK", 1, 1)
+    plot_flight_destinations("JFK", 1, 1, conn)
     
     print("\nFlight Statistics for JFK on 1/1:")
-    get_flight_stats("JFK", 1, 1)
+    get_flight_stats("JFK", 1, 1, conn)
     
     print("\nPlane Type Counts from JFK to LAX:")
     get_plane_type_counts("JFK", "LAX")
     
     print("\nPlotting Average Departure Delay per Airline...")
-    fig2 = plot_avg_dep_delay()
+    fig2 = plot_avg_dep_delay(conn)
     fig2.show()
     
     print("\nCounting Delayed Flights to LAX from Jan to Mar:")
     count_delayed_flights(1, 3, "LAX")
     
     print("\nAnalyzing Distance vs Arrival Delay:")
-    corr, fig3 = analyze_distance_vs_arrival_delay()
+    corr, fig3 = analyze_distance_vs_arrival_delay(conn)
     print(f"Correlation: {corr:.3f}")
     fig3.show()
     
     print("\nComputing Average Speed per Plane Model:")
-    compute_avg_speed_per_plane_model()
+    compute_avg_speed_per_plane_model(conn)
 
     print("\nVerifying computed distances against the database values...")
-    fig4, text1,text2 = verify_distance_computation()
+    fig4, text1,text2 = verify_distance_computation(conn)
     fig4.show()
     print(text1)
     print(text2)

@@ -19,6 +19,22 @@ def compute_distances():
     )
     return df
 
+def compute_distance(dept_airport, arr_airport):
+    """Geodesic distances between two airports."""
+    df = utils.load_airports_data()
+    dept_airport_data = df[df["faa"] == dept_airport]
+    arr_airport_data = df[df["faa"] == arr_airport]
+
+    if dept_airport_data.empty or arr_airport_data.empty:
+        print("One or both airports not found!")
+        return
+
+    dept_lat, dept_lon = dept_airport_data["lat"].values[0], dept_airport_data["lon"].values[0]
+    arr_lat, arr_lon = arr_airport_data["lat"].values[0], arr_airport_data["lon"].values[0]
+
+    geodesic_dist = geodesic((dept_lat, dept_lon), (arr_lat, arr_lon)).mi
+    return geodesic_dist
+
 
 def plot_distance_histograms():
     """Plot histograms of Euclidean and Geodesic distances from JFK."""

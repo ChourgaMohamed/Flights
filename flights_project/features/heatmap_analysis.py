@@ -141,9 +141,12 @@ def plot_delays_heatmap(week_range=None, conn=None):
     return fig
 
 if __name__ == "__main__":
+    # Get persistent connection to the flights database
+    conn = utils.get_persistent_db_connection()
+
     # For testing purposes: show both heatmaps using all data.
-    flights_fig = plot_flights_heatmap()
-    delays_fig = plot_delays_heatmap()
+    flights_fig = plot_flights_heatmap(conn=conn)
+    delays_fig = plot_delays_heatmap(conn=conn)
     # To view the figures in a browser or interactive window:
     flights_fig.show()
     delays_fig.show()
