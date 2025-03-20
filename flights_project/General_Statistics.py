@@ -5,6 +5,9 @@ Uses a single database connection (opened once and passed to subfunctions).
 """
 
 import streamlit as st
+# Set page layout to wide
+st.set_page_config(layout="wide")
+
 from flights_project import utils
 from part1 import plot_routes, compute_distances
 from part4 import flight_statistics
@@ -13,9 +16,6 @@ import pandas as pd
 
 # Initialize (or reuse) a persistent database connection in session_state
 db_conn = get_db_connection()
-
-# Set page layout to wide
-st.set_page_config(layout="wide")
 
 # Load airports data and create options for selectboxes
 airports_df = utils.load_airports_data()
