@@ -7,8 +7,16 @@ Uses a single database connection (opened once and passed to subfunctions).
 import streamlit as st
 from flights_project import utils
 from part1 import plot_routes, plot_airports
-from part3 import delays_analysis, manufacturers_analysis
+from part3 import delays_analysis, flight_statistics, manufacturers_analysis
 from features import airline_comparison, heatmap_analysis
+from part4.flights_statistics import get_nyc_flight_statistics
+from part4 import analysis
+from datetime import datetime
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+import pandas as pd
+
 
 # Initialize (or reuse) a persistent database connection in session_state
 if 'db_conn' not in st.session_state:
@@ -21,10 +29,27 @@ airport_options = [f"{row['faa']} - {row['name']}" for _, row in airports_df.ite
 placeholder = "Select an airport (FAA - Name)"
 airport_options_with_placeholder = [placeholder] + airport_options
 
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 st.title("Flights Project Dashboard")
 st.write("Interactive dashboard to explore flight data.")
+    
+st.sidebar.header('Flights:')
 
-# Sidebar navigation
+# 📌 Sidebar: Select route
+st.sidebar.header("Select Flight Route")
+dep_airport = st.sidebar.selectbox("Departure Airport", ["JFK", "LGA", "EWR"])
+arr_airport = st.sidebar.selectbox("Arrival Airport", ["LAX", "ORD", "ATL", "MIA", "DFW", "SFO", "SEA", "DEN", "BOS", "LAS"])
+
+# 📌 Sidebar: Select Date
+st.sidebar.header("Select date for delay analysis")
+selected_date = st.sidebar.date_input("Choose a Date", datetime(2023, 6, 1))
+
+#st.sidebar.subheader('Heat map parameter')
+#time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
+
+#st.sidebar.subheader('Delay chart parameter')
+#donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
+
 option = st.sidebar.selectbox("Select Analysis", 
                               ("Global Airports Map", "US Airports Map", 
                                "Flight Route", "Delay Analysis", 
@@ -68,17 +93,17 @@ elif option == "Manufacturer Analysis":
                 st.pyplot(result)
 
 
-# elif option == "Flight Statistics":
-#     st.subheader("General Flight Statistics")
-#     total = flight_statistics.get_total_flights(conn=db_conn)
-#     st.write(f"Total Flights: {total}")
-#     busiest = flight_statistics.get_busiest_airports(conn=db_conn)
-#     st.write("Busiest Airports:")
-#     for row in busiest:
-#         st.write(f"Airport: {row[0]}, Flights: {row[1]}")
-#     st.subheader("Distance Analysis")
-#     fig = distance_analysis.plot_distance_histograms()
-#     st.pyplot(fig)
+elif option == "Flight Statistics":
+     st.subheader("General Flight Statistics")
+     total = flight_statistics.get_total_flights(conn=db_conn)
+     st.write(f"Total Flights: {total}")
+     busiest = flight_statistics.get_busiest_airports(conn=db_conn)
+     st.write("Busiest Airports:")
+     for row in busiest:
+         st.write(f"Airport: {row[0]}, Flights: {row[1]}")
+     st.subheader("Distance Analysis")
+     #fig = compute_distances.plot_distance_histograms()
+     #st.pyplot(fig)
 
 elif option == "Airline Comparison":
     st.subheader("Airline Performance Comparison - Spider Chart")
@@ -128,3 +153,45 @@ elif option == "Heatmap Analysis":
     
     st.plotly_chart(fig)
 
+st.sidebar.markdown('''
+---
+Created by: M. Chourga, P. de Veer, L. Robbe, P. Martinez.
+''')
+
+# Row A
+st.markdown('### A few statistics')
+total_flights, flights_per_airport = get_nyc_flight_statistics()
+col1, col2 = st.columns((3,7))
+col1.metric(label="Total flights from NYC in 2023", value=f"{total_flights:,}")
+with col2:
+    # 📊 Graph: Flights per NYC Airport
+    st.subheader("Flights Per NYC Airport")
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.barplot(data=flights_per_airport, x="origin", y="num_flights", palette=utils.COLOR_PALETTE["india_green"])
+    ax.set_xlabel("Airport")
+    ax.set_ylabel("Total flights")
+    ax.set_title("Total flights from all NYC sirport")
+    st.pyplot(fig)
+
+# Row B
+
+
+c1, c2 = st.columns((7,3))
+with c1:
+    st.markdown('### Heatmap')
+    # 📌 Flight Route Statistics
+    st.subheader(f"📍 Flight Statistics: {dep_airport} → {arr_airport}")
+    flight_stats = analysis.get_flight_statistics(dep_airport, arr_airport)
+    st.write(flight_stats)
+    analysis.get_flight_statistics(dep_airport, arr_airport)
+with c2:
+    st.markdown('### Donut chart')
+    # 📌 Delay Analysis & Possible Causes
+    st.subheader(f"⏳ Delay Analysis: {dep_airport} → {arr_airport}")
+    analysis.delay_histogram(dep_airport, arr_airport)
+    
+
+# Row C
+st.markdown('### Line chart')
+st.subheader(f"📅 Delay Statistics for {selected_date}")
+delays_on_date = analysis.get_delays_on_date(selected_date)
