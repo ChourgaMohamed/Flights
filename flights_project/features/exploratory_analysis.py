@@ -46,11 +46,16 @@ def exploratory_analysis():
         color_discrete_sequence=[light_green]
     )
 
+    # Add outlines to the histogram bars
+    hist_fig.update_traces(marker=dict(
+        line=dict(width=1, color="black")  # Black outline for clarity
+    ))
+
     # Combine the two plots into a single figure with subplots
     fig = make_subplots(
         rows=2, cols=1,
         subplot_titles=(
-            "Exploring Altitude vs Distance from NYC", 
+            "Exploring Altitude vs Distance from NYC",
             "Density of Airports by Latitude"
         )
     )

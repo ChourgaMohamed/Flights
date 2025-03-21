@@ -3,6 +3,7 @@ This module computes general flight statistics.
 Uses a provided DB connection via utils.
 """
 
+import pandas as pd
 from flights_project import utils
 
 def get_total_flights(conn=None):
@@ -21,19 +22,21 @@ def get_busiest_airports(n=5, conn=None):
     LIMIT ?;
     """
     result = utils.execute_query(query, params=(n,), fetch='all', conn=conn)
-    return result
+
+    # Convert result to a pandas DataFrame for better readability
+    df = pd.DataFrame(result, columns=["Airport", "Flights"])
+    return df
 
 def main():
-    # Open persistent connection
+    """Run flight statistics computations (opens its own DB connection if none provided)."""
     conn = utils.get_persistent_db_connection()
 
-    """Run flight statistics computations (opens its own DB connection if none provided)."""
     total = get_total_flights(conn)
     print(f"Total flights: {total}")
+
     busiest = get_busiest_airports(conn=conn)
     print("Busiest Airports (top 5):")
-    for row in busiest:
-        print(f"Airport: {row[0]}, Flights: {row[1]}")
+    print(busiest.to_string(index=False))
 
 if __name__ == "__main__":
     main()

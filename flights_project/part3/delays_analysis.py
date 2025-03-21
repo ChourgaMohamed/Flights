@@ -29,13 +29,22 @@ def plot_delay_histogram(start_date="2023-01-01", end_date="2023-12-31", conn=No
     if conn is None:
         conn = utils.get_db_connection()
     delays = get_delay_data(start_date, end_date, conn)
+
+    light_green = utils.COLOR_PALETTE["light_green"]
+
     fig = px.histogram(
         x=delays,
         range_x=[-20, 150],
         title=f"Distribution of Flight Departure Delays ({start_date} to {end_date})",
         labels={'x': "Departure Delay (minutes)", 'y': "Number of Flights"},
-        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]]
+        color_discrete_sequence=[light_green]
     )
+
+    # Add outlines to histogram bars
+    fig.update_traces(marker=dict(
+        line=dict(width=1, color="black")  # Black outline for better clarity
+    ))
+
     return fig
 
 def main():
