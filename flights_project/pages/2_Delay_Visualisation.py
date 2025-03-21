@@ -6,8 +6,8 @@ import pandas as pd
 
 db_conn = get_db_connection()
 
-st.title("Delay Analysis")
-st.subheader("Flight Delay Analysis")
+st.title("Delay analysis")
+st.subheader("Departure delays in 2023")
 
 # Sidebar for date range selection
 st.sidebar.header("Select Date Range")
@@ -19,12 +19,12 @@ start_date_str = start_date.strftime("%Y-%m-%d")
 end_date_str = end_date.strftime("%Y-%m-%d")
 
 # Plot delay histogram
-st.write("Delay histogram")
 fig_delay_histogram = delays_analysis.plot_delay_histogram(start_date=start_date_str, end_date=end_date_str, conn=db_conn)
 st.plotly_chart(fig_delay_histogram)
 
 # Plot heatmaps side by side
-st.header("Heatmap Analysis")
+st.markdown("<h2 style='text-align: center;'>Heatmap analysis</h2>", unsafe_allow_html=True)
+#st.header("Heatmap Analysis")
 col1, col2 = st.columns(2)
 
 with col1:

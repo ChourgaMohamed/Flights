@@ -32,8 +32,8 @@ def plot_delay_histogram(start_date="2023-01-01", end_date="2023-12-31", conn=No
     fig = px.histogram(
         x=delays,
         range_x=[-20, 150],
-        title=f"Distribution of Flight Departure Delays ({start_date} to {end_date})",
-        labels={'x': "Departure Delay (minutes)", 'y': "Number of Flights"},
+        title=f"Distribution of flight departure delays ({start_date} to {end_date})",
+        labels={'x': "Departure delay (minutes)", 'y': "Number of flights"},
         color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]]
     )
     return fig
