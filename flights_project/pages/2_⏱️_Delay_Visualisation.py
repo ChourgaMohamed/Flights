@@ -30,7 +30,7 @@ with col1:
     st.plotly_chart(fig_delay_histogram)
 
 with col2:
-    fig_delay_histogram = delays_analysis. plot_day_delay(day=delay_date_str, conn=db_conn)
+    fig_delay_histogram = delays_analysis.plot_day_delay(day=delay_date_str, conn=db_conn)
     st.plotly_chart(fig_delay_histogram)
 
 

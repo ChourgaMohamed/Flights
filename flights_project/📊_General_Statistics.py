@@ -19,13 +19,9 @@ import pandas as pd
 # Initialize a persistent database connection in session_state
 db_conn = get_db_connection()
 
-<<<<<<< HEAD:flights_project/📊_General_Statistics.py
-# Load airports data
-airports_df = utils.load_airports_data()
-=======
+
 # Load airports data and create options for selectboxes
 airports_df = flight_statistics.get_all_arrival_airports(conn=db_conn)
->>>>>>> Improving-flight-statistics:flights_project/General_Statistics.py
 airport_options = [f"{row['faa']} - {row['name']}" for _, row in airports_df.iterrows()]
 placeholder = "Select an airport (FAA - Name)"
 airport_options_with_placeholder = [placeholder] + airport_options

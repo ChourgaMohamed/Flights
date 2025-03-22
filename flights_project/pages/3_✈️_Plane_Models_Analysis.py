@@ -46,9 +46,7 @@ fig_model_summary = plane_type_analyses.plot_model_distance_year(df)
 st.plotly_chart(fig_model_summary, use_container_width=True)
 st.markdown("✈️ **A321-271NX** has the **longest flight time**, and **767-432ER** has the **longest flight distance**.")
 
-<<<<<<< HEAD:flights_project/pages/3_✈️_Plane_Models_Analysis.py
-# Sidebar credit
-=======
+
 # Create two columns
 col1, col2 = st.columns(2)
 with col1:
@@ -58,8 +56,8 @@ with col2:
     st.markdown("##### Plane manufacturer per carrier")
     per_carrier = plane_type_analyses.plane_manufacturer_per_carrier(conn=db_conn)
     st.dataframe(per_carrier.set_index(per_carrier.columns[0]))
-    
->>>>>>> Improving-flight-statistics:flights_project/pages/3_Plane_Models_Analysis.py
+
+# Sidebar credit
 st.sidebar.markdown('''
 ---
 Created by: M. Chourga, P. de Veer, L. Robbe, P. Martinez.
