@@ -1,5 +1,6 @@
 import streamlit as st
-from part3 import flight_statistics, flight_analysis
+from part3 import flight_statistics3
+from part3 import flight_analysis
 from db import get_db_connection
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,12 +9,12 @@ from flights_project import utils
 db_conn = get_db_connection()
 
 col1, col2 = st.columns([2, 3])
-total = flight_statistics.get_total_flights(conn=db_conn)
-busiest = flight_statistics.get_busiest_airports(conn=db_conn)
+total = flight_statistics3.get_total_flights(conn=db_conn)
+busiest = flight_statistics3.get_busiest_airports(conn=db_conn)
 busiest_df = pd.DataFrame(busiest, columns=["Airport", "Flights"])
 with col1:
      st.title("Flight statistics")
-     total = flight_statistics.get_total_flights(conn=db_conn)
+     total = flight_statistics3.get_total_flights(conn=db_conn)
      st.dataframe(busiest_df.set_index("Airport"))
      st.write(f"Total flights: {total}")
 with col2:
