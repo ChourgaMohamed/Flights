@@ -112,11 +112,6 @@ def get_nyc_flight_statistics(conn=None):
     ORDER BY num_flights DESC
     """
     flights_per_airport = pd.read_sql_query(query_per_airport, conn, params=nyc_airports)
-
-    # print("📊 Total Flights Departing from NYC Airports in 2023:", total_flights.iloc[0, 0])
-    # print("\n✈️ Breakdown by Airport:")
-    # print(flights_per_airport)
-
     return total_flights.iloc[0, 0], flights_per_airport
 
 def main():
