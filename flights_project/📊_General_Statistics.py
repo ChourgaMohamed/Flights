@@ -19,8 +19,13 @@ import pandas as pd
 # Initialize a persistent database connection in session_state
 db_conn = get_db_connection()
 
+<<<<<<< HEAD:flights_project/📊_General_Statistics.py
 # Load airports data
 airports_df = utils.load_airports_data()
+=======
+# Load airports data and create options for selectboxes
+airports_df = flight_statistics.get_all_arrival_airports(conn=db_conn)
+>>>>>>> Improving-flight-statistics:flights_project/General_Statistics.py
 airport_options = [f"{row['faa']} - {row['name']}" for _, row in airports_df.iterrows()]
 placeholder = "Select an airport (FAA - Name)"
 airport_options_with_placeholder = [placeholder] + airport_options
@@ -108,7 +113,7 @@ if arr_airport != placeholder:
     faa_code = airport_options
     faa_code = arr_airport.split(" - ")[0]
     fig = plot_routes.plot_flight_route(dep_airport, faa_code)
-    fig.update_layout(margin=dict(l=0, r=0, t=20, b=0))  # optional
+    fig.update_layout(margin=dict(l=0, r=0, t=20, b=0))
     st.plotly_chart(fig, use_container_width=True)
 
 

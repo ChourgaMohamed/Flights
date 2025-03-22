@@ -26,6 +26,28 @@ def get_flight_statistics(dep_airport, arr_airport, conn=None):
     text = f"Flight statistics for {dep_airport} → {arr_airport}"
     return text, result
 
+def get_all_arrival_airports(conn=None):
+    """
+    Return a list of all unique arrival airports using a provided DB connection.
+
+    Returns a DataFrame with columns:
+        - faa (airport code)
+        - name (airport name)
+    """
+    if conn is None:
+        conn = utils.get_persistent_db_connection()
+    query = """
+    SELECT DISTINCT a.faa, a.name
+    FROM flights f
+    JOIN airports a ON f.dest = a.faa;
+    """
+    df = utils.execute_query(query, fetch='all', conn=conn)
+    df = pd.DataFrame(df, columns=["faa", "name"])
+
+    df = df.sort_values(by="faa")
+    
+    return df
+
 def delay_histogram(airport, start_date, end_date, conn=None):
     """
     Plot KDE curves for departure and arrival delays for a given airport and date range.

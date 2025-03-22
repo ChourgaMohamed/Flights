@@ -273,6 +273,68 @@ def compute_avg_speed_per_plane_model(conn=None):
     print(df_speed)
     return df_speed
 
+def get_flights_from_airport(dep_airports, start_date, end_date, conn=None):
+    """
+    Retrieve flights from the given departure airport(s) within a date range.
+    
+    Args:
+        dep_airports (list or str): List of departure airport codes or a single departure airport code.
+        start_date (str): Start date in the format 'YYYY-MM-DD'.
+        end_date (str): End date in the format 'YYYY-MM-DD'.
+        conn (sqlite3.Connection, optional): Existing DB connection.
+    
+    Returns:
+        DataFrame: A DataFrame with flight details.
+    """
+    if conn is None:
+        conn = utils.get_persistent_db_connection()
+    
+    if isinstance(dep_airports, list):
+        query = """
+        SELECT DATE(f.date) AS date, 
+               TIME(f.sched_dep_time) AS sched_dep_time, 
+               f.dep_delay AS dep_delay, 
+               TIME(f.sched_arr_time) AS sched_arr_time, 
+               f.arr_delay AS arr_delay, 
+               f.origin, 
+               a2.name AS dest_name, 
+               a.name AS carrier_name, 
+               f.tailnum, 
+               p.model
+        FROM flights f
+        JOIN planes p ON f.tailnum = p.tailnum
+        JOIN airlines a ON f.carrier = a.carrier
+        JOIN airports a2 ON f.dest = a2.faa
+        WHERE f.origin IN ({})
+          AND f.date BETWEEN ? AND ?
+        ORDER BY f.date;
+        """.format(','.join(['?']*len(dep_airports)))
+        params = dep_airports + [start_date, end_date]
+    else:
+        query = """
+        SELECT DATE(f.date) AS date, 
+               TIME(f.sched_dep_time) AS sched_dep_time, 
+               f.dep_delay AS dep_delay, 
+               TIME(f.sched_arr_time) AS sched_arr_time, 
+               f.arr_delay AS arr_delay,
+               f.origin, 
+               a2.name AS dest_name, 
+               a.name AS carrier_name, 
+               f.tailnum, 
+               p.model
+        FROM flights f
+        JOIN planes p ON f.tailnum = p.tailnum
+        JOIN airlines a ON f.carrier = a.carrier
+        JOIN airports a2 ON f.dest = a2.faa
+        WHERE f.origin = ?
+          AND f.date BETWEEN ? AND ?
+        ORDER BY f.date;
+        """
+        params = [dep_airports, start_date, end_date]
+
+    df = pd.read_sql(query, conn, params=params)
+    return df
+
 def verify_distance_computation(conn=None):
     """
     Verify that the computed geodesic distances (using the haversine formula)
@@ -304,7 +366,7 @@ def verify_distance_computation(conn=None):
     mean_diff = df["difference"].abs().mean()
     mean_rel_err = df["relative_error"].mean()
     text1=(f"Mean absolute difference: {mean_diff:.2f} km")
-    text2=(f"Mean relative error: {mean_rel_err:.2%}")
+    text2=(f"Mean relatifve error: {mean_rel_err:.2%}")
     
     fig = px.scatter(
         df,
@@ -376,6 +438,10 @@ def main():
     fig4.show()
     print(text1)
     print(text2)
+
+    print("\nFlights from JFK between 2023-01-01 and 2023-12-31:")
+    flights_df = get_flights_from_airport("JFK", "2023-01-01", "2023-12-31", conn)
+    print(flights_df.head())
 
 if __name__ == "__main__":
     main()
