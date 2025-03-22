@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="Added bar lines to delays analysis bar chart">
+    <list default="true" id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="Added emoji's">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/General_Statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/_General_Statistics.py" afterPathEscaped="$PROJECT_DIR$/flights_project/📊_General_Statistics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/1_Airports_Insights.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/1__Airports_Insights.py" afterPathEscaped="$PROJECT_DIR$/flights_project/pages/1_🛫_Airports_Insights.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/2_Delay_Visualisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/2_⏱️_Delay_Visualisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/3_Plane_Models_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/3_✈️_Plane_Models_Analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/4_Flight_Statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/4__Flight_Statistics.py" afterPathEscaped="$PROJECT_DIR$/flights_project/pages/4_🧮_Flight_Statistics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/5_Airline_Comparison.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/5__Airline_Comparison.py" afterPathEscaped="$PROJECT_DIR$/flights_project/pages/5_🏁_Airline_Comparison.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flights_project/pages/7_Weather_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/7_️_Weather_Analysis.py" afterPathEscaped="$PROJECT_DIR$/flights_project/pages/7_🌦️_Weather_Analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/features/plane_type_analyses.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/features/plane_type_analyses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/pages/3_✈️_Plane_Models_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/3_✈️_Plane_Models_Analysis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,6 +98,7 @@
     "Python.plot_routes.executor": "Run",
     "Python.utils.executor": "Run",
     "Python.weather_analysis.executor": "Run",
+    "Python.📊_General_Statistics.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "#7 on Multiple-pages-test"
   }
@@ -221,7 +216,23 @@
       <option name="project" value="LOCAL" />
       <updated>1742635882717</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Added emoji's">
+      <option name="closed" value="true" />
+      <created>1742636834650</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1742636834650</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Added emoji's">
+      <option name="closed" value="true" />
+      <created>1742636841421</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1742636841421</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -247,6 +258,7 @@
     <MESSAGE value="Part 1 set to dashbord collor light green done" />
     <MESSAGE value="Cleaned the file" />
     <MESSAGE value="Added bar lines to delays analysis bar chart" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added bar lines to delays analysis bar chart" />
+    <MESSAGE value="Added emoji's" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added emoji's" />
   </component>
 </project>
