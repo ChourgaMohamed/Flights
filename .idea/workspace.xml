@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="Cleaned the file" />
+    <list default="true" id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="Cleaned the file">
+      <change afterPath="$PROJECT_DIR$/flights_project/pages/7_Weather_Analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/pages/2_Delay_Visualisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/2_Delay_Visualisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/pages/4_Flight_Statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/pages/4_Flight_Statistics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/part3/delays_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/part3/delays_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/part3/weather_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/part3/weather_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/part4/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/part4/analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/part4/extra_features.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flights_project/part4/flight_statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/flights_project/part4/flight_statistics.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -58,46 +67,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.1_Airports_Insights.executor&quot;: &quot;Run&quot;,
-    &quot;Python.2_Delay_Visualisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.4_Flight_Statistics.executor&quot;: &quot;Run&quot;,
-    &quot;Python.General_Statistics.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Part1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Parttest.executor&quot;: &quot;Run&quot;,
-    &quot;Python.airline_comparison.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyze_altitudes.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyze_timezones.executor&quot;: &quot;Run&quot;,
-    &quot;Python.app.executor&quot;: &quot;Run&quot;,
-    &quot;Python.bad_weather_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.compute_distances.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dashboard_part_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.database_test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.db.executor&quot;: &quot;Run&quot;,
-    &quot;Python.delays_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.distance_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.exploratory_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.flight_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.flight_route_functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.flight_statistics.executor&quot;: &quot;Run&quot;,
-    &quot;Python.global_and_US_maps.executor&quot;: &quot;Run&quot;,
-    &quot;Python.heatmap_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.load_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.manufacturers_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.part1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.part4.executor&quot;: &quot;Run&quot;,
-    &quot;Python.part5.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_airports.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_routes.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
-    &quot;Python.weather_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Multiple-pages-test&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.1_Airports_Insights.executor": "Run",
+    "Python.2_Delay_Visualisation.executor": "Run",
+    "Python.4_Flight_Statistics.executor": "Run",
+    "Python.General_Statistics.executor": "Run",
+    "Python.Part1.executor": "Run",
+    "Python.Parttest.executor": "Run",
+    "Python.airline_comparison.executor": "Run",
+    "Python.analysis.executor": "Run",
+    "Python.analyze_altitudes.executor": "Run",
+    "Python.analyze_timezones.executor": "Run",
+    "Python.app.executor": "Run",
+    "Python.bad_weather_analysis.executor": "Run",
+    "Python.compute_distances.executor": "Run",
+    "Python.dashboard_part_1.executor": "Run",
+    "Python.database_test.executor": "Run",
+    "Python.db.executor": "Run",
+    "Python.delays_analysis.executor": "Run",
+    "Python.distance_analysis.executor": "Run",
+    "Python.exploratory_analysis.executor": "Run",
+    "Python.flight_analysis.executor": "Run",
+    "Python.flight_route_functions.executor": "Run",
+    "Python.flight_statistics.executor": "Run",
+    "Python.global_and_US_maps.executor": "Run",
+    "Python.heatmap_analysis.executor": "Run",
+    "Python.load_data.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.manufacturers_analysis.executor": "Run",
+    "Python.part1.executor": "Run",
+    "Python.part4.executor": "Run",
+    "Python.part5.executor": "Run",
+    "Python.plot_airports.executor": "Run",
+    "Python.plot_routes.executor": "Run",
+    "Python.utils.executor": "Run",
+    "Python.weather_analysis.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Merging Multiple-pages-test"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/flights_project/part1" />
@@ -187,7 +196,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742583329659</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Cleaned the file">
+      <option name="closed" value="true" />
+      <created>1742635149043</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1742635149043</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
