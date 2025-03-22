@@ -1,3 +1,4 @@
+from datetime import datetime
 import plotly.express as px
 import pandas as pd
 from flights_project import utils
@@ -55,7 +56,7 @@ def plot_flight_route(dept_airport, arr_airport):
     return fig
 
 
-def plot_multiple_routes(dept_airport, faa_codes):
+def plot_multiple_routes(dept_airport = "JFK", day_flight = "01-01-2023", airports_df = None, conn=None):
     """
     Plot multiple flight routes from a single departure airport to a list of target airports.
 
@@ -63,7 +64,11 @@ def plot_multiple_routes(dept_airport, faa_codes):
         dept_airport (str): FAA code of the departure airport.
         faa_codes (list): List of FAA codes for target airports.
     """
-    df = utils.load_airports_data()
+    if conn is None:
+        conn = utils.get_db_connection()
+    faa_codes, frequency = get_dest_airports(dept_airport, day_flight, conn)
+    df = airports_df
+    
     dept_airport_data = df[df["faa"] == dept_airport]
     target_airports = df[df["faa"].isin(faa_codes)]
 
@@ -81,7 +86,7 @@ def plot_multiple_routes(dept_airport, faa_codes):
         plot_data, lat="lat", lon="lon",
         text="name",
         hover_name="name",
-        title=f"Routes from {dept_airport} to Selected Airports",
+        title=f"Routes from {dept_airport} on the {day_flight} that occur more than 5 times",
         size_max=5,
         opacity=0.6,
         color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]
@@ -113,8 +118,38 @@ def plot_multiple_routes(dept_airport, faa_codes):
         ),
     )
     
-    return fig
+    df = pd.DataFrame(frequency, columns=["Airport", "Visit Count"])
+    fig2 = px.bar(df, x="Airport", y="Visit Count", 
+                 title=f"Flight Frequency from {dept_airport} on {day_flight}",
+                 labels={"Airport": "Destination Airport", "Visit Count": "Number of Flights"},
+                 color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]],
+                 text_auto=True)
 
+    fig2.update_layout(yaxis_title="Number of flights", xaxis_title="Destination airport")
+
+    return fig, fig2
+
+def get_dest_airports(dep_airport = "JFK", day_flight = "01-01-2023", conn=None):
+  
+    date_obj = datetime.strptime(day_flight, "%Y-%m-%d")
+    day_dep = date_obj.day
+    month_dep = date_obj.month
+    query = """
+    SELECT dest
+    FROM flights 
+    WHERE dest IS NOT NULL 
+    AND origin = ? AND day = ? AND month = ?;
+    """
+    data = utils.execute_query(query, fetch='all', conn=conn, params=(dep_airport, day_dep, month_dep))
+    airport_counts = {}
+    for row in data:
+        airport = row[0]
+        airport_counts[airport] = airport_counts.get(airport, 0) + 1
+    
+    airport_visit_counts = sorted(airport_counts.items(), key=lambda x: x[1], reverse=True)
+    print("Airport Visit Counts:", airport_visit_counts)  # Debugging step (optional)
+    frequent_airports = [airport for airport, count in airport_counts.items() if count > 5]
+    return frequent_airports, airport_visit_counts
 
 def main():
     """Test flight route functions."""
