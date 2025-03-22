@@ -75,7 +75,7 @@ This project requires **Python 3.12.9** and the dependencies listed in `requirem
    Navigate to the project directory and launch the app with:
 
    ```bash
-   streamlit run ./flights_project/app.py
+   streamlit run ./flights_project/📊_General_Statistics.py
    ```
 
 ## Dashboard
