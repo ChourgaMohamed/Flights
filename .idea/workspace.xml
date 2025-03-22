@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="Cleaned the file" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="main" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="File-restructuring" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;laurensrobbe&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ChourgaMohamed/Flights.git&quot;,
+    &quot;accountId&quot;: &quot;04703ba6-1c87-4a12-a3bf-7ecad50ae0ff&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;ChourgaMohamed&quot;,
+    &quot;repository&quot;: &quot;Flights&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2tGXOeqxnuLu5mGIRwffGAnjLno" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.1_Airports_Insights.executor&quot;: &quot;Run&quot;,
+    &quot;Python.2_Delay_Visualisation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.4_Flight_Statistics.executor&quot;: &quot;Run&quot;,
+    &quot;Python.General_Statistics.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Part1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Parttest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.airline_comparison.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyze_altitudes.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyze_timezones.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bad_weather_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.compute_distances.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dashboard_part_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.database_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.db.executor&quot;: &quot;Run&quot;,
+    &quot;Python.delays_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.distance_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.exploratory_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flight_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flight_route_functions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flight_statistics.executor&quot;: &quot;Run&quot;,
+    &quot;Python.global_and_US_maps.executor&quot;: &quot;Run&quot;,
+    &quot;Python.heatmap_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.load_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.manufacturers_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.part1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.part4.executor&quot;: &quot;Run&quot;,
+    &quot;Python.part5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plot_airports.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plot_routes.executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
+    &quot;Python.weather_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Multiple-pages-test&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/flights_project/part1" />
+      <recent name="$PROJECT_DIR$/flights_project/extra" />
+      <recent name="$PROJECT_DIR$/Flights_Clean/dataset" />
+      <recent name="$PROJECT_DIR$/Flights_Clean" />
+      <recent name="$PROJECT_DIR$/Part1" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-98f27166c754-ba05f1cad1b1-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.21829.153" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ff160143-c613-4405-bd77-c8bdf733758b" name="Changes" comment="" />
+      <created>1739979353771</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739979353771</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Latest version">
+      <option name="closed" value="true" />
+      <created>1741018258884</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741018258884</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Latest version">
+      <option name="closed" value="true" />
+      <created>1741019099096</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1741019099096</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Latest version">
+      <option name="closed" value="true" />
+      <created>1741019116719</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1741019116719</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Latest version">
+      <option name="closed" value="true" />
+      <created>1742215708087</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742215708087</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Latest version">
+      <option name="closed" value="true" />
+      <created>1742218071270</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1742218071270</updated>
+    </task>
+    <task id="LOCAL-00006" summary="plot_airports.py fixed altitude collor + only us airports. Non us aiports still must be fixed though. checking it tomorrow.">
+      <option name="closed" value="true" />
+      <created>1742330102097</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742330102098</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Part 1 set to dashbord collor light green done">
+      <option name="closed" value="true" />
+      <created>1742380940657</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1742380940658</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Cleaned the file">
+      <option name="closed" value="true" />
+      <created>1742583329659</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1742583329659</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Latest version" />
+    <MESSAGE value="plot_airports.py fixed altitude collor + only us airports. Non us aiports still must be fixed though. checking it tomorrow." />
+    <MESSAGE value="Part 1 set to dashbord collor light green done" />
+    <MESSAGE value="Cleaned the file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned the file" />
+  </component>
+</project>
