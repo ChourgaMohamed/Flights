@@ -36,7 +36,7 @@ stats_df, correlation, headwind_mean, tailwind_mean, percent_diff = calculate_st
 
 # Display statistics table
 st.subheader("Air Time Statistics by Wind Condition")
-st.dataframe(stats_df)
+st.dataframe(stats_df.set_index(stats_df.columns[0]))
 
 # Get and display conclusion
 correlation_text, conclusion = get_conclusion_text(correlation, headwind_mean, tailwind_mean, percent_diff)

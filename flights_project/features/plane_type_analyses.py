@@ -158,32 +158,51 @@ def plot_scatter_plots(df):
 
 def plot_model_distance_year(df):
     """
-    Create a scatter plot based on maximum flight distance and maximum air time
-    for each plane model. Each dot represents a plane model and is annotated with its model name.
-    
-    Returns the Plotly figure.
+    Create a scatter plot of max distance vs. max air time per plane model.
+    Only the model with the longest air time and the model with the longest distance
+    will be annotated.
+
+    Returns:
+        fig (Figure): Plotly scatter plot.
     """
-    # Aggregate by model: maximum flight distance and maximum air time per model
+    # Aggregate by model
     df_grouped = df.groupby('model').agg({
         'distance': 'max',
         'air_time': 'max'
     }).reset_index()
-    
+
+    # Identify models to annotate
+    max_air_time_row = df_grouped[df_grouped["air_time"] == df_grouped["air_time"].max()]
+    max_distance_row = df_grouped[df_grouped["distance"] == df_grouped["distance"].max()]
+
+    # Create annotation column
+    df_grouped["label"] = ""
+
+    for idx in max_air_time_row.index:
+        df_grouped.loc[idx, "label"] = df_grouped.loc[idx, "model"]
+
+    for idx in max_distance_row.index:
+        df_grouped.loc[idx, "label"] = df_grouped.loc[idx, "model"]
+
     fig = px.scatter(
         df_grouped,
         x="distance",
         y="air_time",
-        text="model",
+        text="label",
         opacity=0.7,
         color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]],
-        labels={"distance": "Maximum Flight Distance", "air_time": "Maximum Air Time"}
+        labels={
+            "distance": "Maximum Flight Distance (miles)",
+            "air_time": "Maximum Air Time (min)"
+        }
     )
     fig.update_traces(textposition="top center")
     fig.update_layout(
-        title="Plane Models: Maximum Distance vs. Maximum Air Time",
-        xaxis_title="Maximum Flight Distance",
-        yaxis_title="Maximum Air Time"
+        title="Plane Models: Max Distance vs. Max Air Time",
+        xaxis_title="Maximum Flight Distance (miles)",
+        yaxis_title="Maximum Air Time (min)"
     )
+
     return fig
 
 def plot_violin_distance_by_engine(conn=None):

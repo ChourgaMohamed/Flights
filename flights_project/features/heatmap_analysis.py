@@ -48,7 +48,7 @@ def plot_flights_heatmap(start_date="2023-01-01", end_date="2023-12-31", conn=No
         x=data.columns,
         y=data.index,
         aspect="auto",
-        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE  # Ensure CUSTOM_CMAP is a valid Plotly color scale (e.g., list of hex colors)
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
     fig.update_layout(title=f"Frequency flights ({start_date} to {end_date})")
     return fig
@@ -91,7 +91,7 @@ def plot_delays_heatmap(start_date="2023-01-01", end_date="2023-12-31", conn=Non
         x=data.columns,
         y=data.index,
         aspect="auto",
-        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE  # Ensure CUSTOM_CMAP is compatible with Plotly Express
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE 
     )
     fig.update_layout(title=f"Average departure delays (minutes) ({start_date} to {end_date})")
     return fig
@@ -99,7 +99,6 @@ def plot_delays_heatmap(start_date="2023-01-01", end_date="2023-12-31", conn=Non
 if __name__ == "__main__":
     # Get persistent connection to the flights database
     conn = utils.get_persistent_db_connection()
-
     # For testing purposes: show both heatmaps using all data.
     flights_fig = plot_flights_heatmap(conn=conn)
     delays_fig = plot_delays_heatmap(conn=conn)
