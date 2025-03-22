@@ -97,14 +97,6 @@ def analyze_inner_product_and_airtime(conn=None):
     # Add a column for category
     combined_df["Category"] = np.where(combined_df["inner_product"] >= 0, "High Positive", "High Negative")
     
-    plt.figure(figsize=(10,6))
-    sns.violinplot(x="Category", y="air_time", data=combined_df,
-                   palette={"High Positive": "blue", "High Negative": "red"})
-    plt.title("Air Time vs Inner Product Categories (Selected Flights)")
-    plt.xlabel("Inner Product Category")
-    plt.ylabel("Air Time (minutes)")
-    plt.show()
-    
     return df
 
 def prepare_data(df, include_neutral=False):
@@ -238,7 +230,7 @@ def create_improved_density_plot(df):
             x=[headwind_mean, headwind_mean],
             y=[0, y_max * 1.1],
             mode='lines',
-            line=dict(color="red", width=2, dash="dash"),
+            line=dict(color="darkred", width=2, dash="dash"),
             name=f"Headwind Mean"
         )
     )
@@ -248,7 +240,7 @@ def create_improved_density_plot(df):
             x=[tailwind_mean, tailwind_mean],
             y=[0, y_max * 1.1],
             mode='lines',
-            line=dict(color="blue", width=2, dash="dash"),
+            line=dict(color="darkblue", width=2, dash="dash"),
             name=f"Tailwind Mean"
         )
     )
