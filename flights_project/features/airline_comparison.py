@@ -10,7 +10,57 @@ Uses shared DB helpers and color palette from utils.
 """
 
 from flights_project import utils
+import pandas as pd
 import plotly.graph_objects as go
+
+def get_stats_per_airline(conn=None):
+    """
+    Compute basic statistics per airline, including:
+      - Total flights
+      - Number of unique routes
+      - Most frequent route
+      - Number of unique planes
+      - Most common plane model
+      - Average departure delay
+      - Average arrival delay
+      - Average air time
+      
+      Returns a dataframe with the statistics.
+    """
+    query = """
+    SELECT 
+        f.carrier,
+        a.name AS airline_name,
+        COUNT(*) AS total_flights,
+        COUNT(DISTINCT f.origin || '-' || f.dest) AS unique_routes,
+        (SELECT origin || '-' || dest 
+         FROM flights 
+         WHERE carrier = f.carrier 
+         GROUP BY origin || '-' || dest 
+         ORDER BY COUNT(*) DESC 
+         LIMIT 1) AS most_freq_route,
+        COUNT(DISTINCT f.tailnum) AS unique_planes,
+        (SELECT model 
+         FROM planes 
+         WHERE tailnum = f.tailnum 
+         GROUP BY model 
+         ORDER BY COUNT(*) DESC 
+         LIMIT 1) AS most_common_plane_model,
+        AVG(f.dep_delay) AS avg_dep_delay,
+        AVG(f.arr_delay) AS avg_arr_delay,
+        AVG(f.air_time) AS avg_air_time
+    FROM flights f
+    JOIN airlines a 
+      ON f.carrier = a.carrier
+    GROUP BY f.carrier, a.name
+    ORDER BY f.carrier;
+    """
+    data = utils.execute_query(query, fetch='all', conn=conn)
+    return pd.DataFrame(data, columns=[
+        "Carrier", "Airline Name", "Total Flights", "Routes", "Most Frequent Route",
+        "Unique Planes", "Top Plane Model",
+        "Avg Departure Delay", "Avg Arrival Delay", "Avg Air Time"
+    ])
 
 def get_airline_performance(conn=None):
     """
@@ -123,7 +173,7 @@ def get_all_carriers(conn=None):
 
 def get_top_carriers_by_flight_count(conn=None, limit=3):
     """
-    Return a list of the top N carriers (by total flight count),
+    Return a DataFrame of the top N carriers (by total flight count),
     only among those that meet the data-quality filter.
     """
     performance = get_airline_performance(conn)
@@ -132,10 +182,10 @@ def get_top_carriers_by_flight_count(conn=None, limit=3):
     for p in performance_sorted:
         label = p["airline_name"] if p["airline_name"] else p["carrier"]
         if label not in top_carriers:
-            top_carriers.append(label)
+            top_carriers.append({"Airline": label, "Total Flights": p["total_flights"]})
         if len(top_carriers) == limit:
             break
-    return top_carriers
+    return pd.DataFrame(top_carriers)
 
 def plot_airline_performance_spider(conn=None, carriers=None):
     """
@@ -199,7 +249,6 @@ def plot_airline_performance_spider(conn=None, carriers=None):
                 range=[0, 100]
             )
         ),
-        title="Airline Performance Spider Chart (On-Time Metrics)",
         showlegend=True
     )
     return fig

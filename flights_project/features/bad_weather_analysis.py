@@ -75,7 +75,6 @@ def bad_weather_analysis(conn=None):
         "dep_delay", 
         "arr_delay", 
         "air_time",
-        # "cancelled",   # uncomment if exists
         "wind_speed", 
         "wind_dir", 
         "precip", 

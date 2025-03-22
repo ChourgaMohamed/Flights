@@ -19,6 +19,58 @@ import pandas as pd
 import plotly.express as px
 from plotly.subplots import make_subplots
 from flights_project import utils
+import numpy as np
+
+def airports_with_plane_manufacturer_data(conn=None):
+    """
+    Retrieve the list of airports with plane manufacturer data available.
+    Returns a DataFrame with columns:
+        - faa (airport code)
+        - name (airport name)
+    """
+    query = """
+    SELECT DISTINCT f.dest AS faa, a.name
+    FROM flights f
+    JOIN airports a ON f.dest = a.faa
+    WHERE f.dest IS NOT NULL;
+    """
+    if conn is None:
+        with utils.get_db_connection() as conn:
+            df = pd.read_sql(query, conn)
+    else:
+        df = pd.read_sql(query, conn)
+
+    # Sort the DataFrame by faa code
+    df = df.sort_values(by='faa')
+
+    return df
+
+def plane_manufacturer_per_carrier(conn=None):
+    """
+    Retrieve the plane manufacturers for each carrier in the flights table.
+    Returns a DataFrame with columns:
+        - carrier_name (carrier name)
+        - manufacturers (comma-separated list of plane manufacturers)
+    """
+    query = """
+    SELECT a.name AS carrier_name, p.manufacturer
+    FROM flights f
+    JOIN planes p ON f.tailnum = p.tailnum
+    JOIN airlines a ON f.carrier = a.carrier
+    WHERE f.carrier IS NOT NULL
+      AND p.manufacturer IS NOT NULL;
+    """
+    if conn is None:
+        with utils.get_db_connection() as conn:
+            df = pd.read_sql(query, conn)
+    else:
+        df = pd.read_sql(query, conn)
+    
+    # Group by carrier_name and aggregate manufacturers into a comma-separated list
+    df_grouped = df.groupby('carrier_name')['manufacturer'].apply(lambda x: ', '.join(x.unique())).reset_index()
+    df_grouped.columns = ['Carrier', 'Manufacturers']
+    
+    return df_grouped
 
 def get_plane_flight_data(conn=None):
     """
@@ -59,17 +111,27 @@ def analyze_correlations(df):
     Returns the correlation heatmap as a Plotly figure.
     """
     cols = ['year', 'air_time', 'distance', 'engines', 'seats']
-    corr_matrix = df[cols].corr()
-    # print("Correlation Matrix:")
-    # print(corr_matrix)
+    corr_matrix = df[cols].corr().round(2)  # Round to two decimals
+
+    # Rename the columns for better readability
+    corr_matrix.columns = [
+        "Plane Year",
+        "Flight Duration",
+        "Flight Distance",
+        "Number of Engines",
+        "Number of Seats"
+    ]
+    corr_matrix.index = corr_matrix.columns
     
+    # Extract the lower triangle of the correlation matrix
+    mask = np.tril(np.ones_like(corr_matrix, dtype=bool))
+    corr_matrix_lower = corr_matrix.where(mask)
+
     # Create a custom colorscale using the palette:
-    
     fig = px.imshow(
-        corr_matrix,
+        corr_matrix_lower,
         text_auto=True,
         color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE,
-        title="Correlation Matrix for Plane and Flight Variables"
     )
     return fig
 
@@ -99,7 +161,8 @@ def plot_scatter_plots(df):
         y="air_time",
         opacity=0.5,
         color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]],
-        labels={"year": "Plane Manufacturing Year", "air_time": "Flight Duration (min)"}
+        labels={"year": "Plane Manufacturing Year", "air_time": "Flight Duration (min)"},
+        hover_data={"model": True}
     )
     for trace in scatter1.data:
         fig.add_trace(trace, row=1, col=1)
@@ -111,7 +174,8 @@ def plot_scatter_plots(df):
         y="distance",
         opacity=0.5,
         color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]],
-        labels={"year": "Plane Manufacturing Year", "distance": "Flight Distance"}
+        labels={"year": "Plane Manufacturing Year", "distance": "Flight Distance"},
+        hover_data={"model": True}
     )
     for trace in scatter2.data:
         fig.add_trace(trace, row=1, col=2)
@@ -123,7 +187,8 @@ def plot_scatter_plots(df):
         y="distance",
         opacity=0.5,
         color_discrete_sequence=[utils.COLOR_PALETTE["pigment_green"]],
-        labels={"engines": "Number of Engines", "distance": "Flight Distance"}
+        labels={"engines": "Number of Engines", "distance": "Flight Distance"},
+        hover_data={"model": True}
     )
     for trace in scatter3.data:
         fig.add_trace(trace, row=2, col=1)
@@ -135,7 +200,8 @@ def plot_scatter_plots(df):
         y="distance",
         opacity=0.5,
         color_discrete_sequence=[utils.COLOR_PALETTE["light_green"]],
-        labels={"seats": "Number of Seats", "distance": "Flight Distance"}
+        labels={"seats": "Number of Seats", "distance": "Flight Distance"},
+        hover_data={"model": True}
     )
     for trace in scatter4.data:
         fig.add_trace(trace, row=2, col=2)

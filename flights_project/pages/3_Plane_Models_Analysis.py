@@ -7,7 +7,7 @@ from db import get_db_connection
 db_conn = get_db_connection()
 
 # Load airports data and prepare selectbox options
-airports_df = utils.load_airports_data()
+airports_df = plane_type_analyses.airports_with_plane_manufacturer_data(conn=db_conn)
 airport_options = [f"{row['faa']} - {row['name']}" for _, row in airports_df.iterrows()]
 placeholder = "Select an airport (FAA - Name)"
 airport_options_with_placeholder = [placeholder] + airport_options
@@ -38,7 +38,15 @@ st.plotly_chart(plane_type_analyses.plot_scatter_plots(df))
 
 st.plotly_chart(plane_type_analyses.plot_model_distance_year(df))
 
-st.plotly_chart(plane_type_analyses.analyze_correlations(df))
+# Create two columns
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("##### Correlation Matrix for Plane and Flight Variables")
+    st.plotly_chart(plane_type_analyses.analyze_correlations(df))
+with col2:
+    st.markdown("##### Plane manufacturer per carrier")
+    per_carrier = plane_type_analyses.plane_manufacturer_per_carrier(conn=db_conn)
+    st.dataframe(per_carrier.set_index(per_carrier.columns[0]))
     
 st.sidebar.markdown('''
 ---
