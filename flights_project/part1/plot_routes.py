@@ -55,49 +55,73 @@ def plot_flight_route(dept_airport, arr_airport):
     return fig
 
 
-def plot_multiple_routes(faa_codes):
+def plot_multiple_routes(dept_airport, faa_codes):
     """
-    Plot multiple flight routes from NYC airports (JFK, LGA, EWR) to a list of target airports.
+    Plot multiple flight routes from a single departure airport to a list of target airports.
 
     Args:
+        dept_airport (str): FAA code of the departure airport.
         faa_codes (list): List of FAA codes for target airports.
     """
     df = utils.load_airports_data()
-    nyc_airports = df[df["faa"].isin(["JFK", "LGA", "EWR"])]
+    dept_airport_data = df[df["faa"] == dept_airport]
     target_airports = df[df["faa"].isin(faa_codes)]
 
+    if dept_airport_data.empty:
+        print(f"Departure airport with FAA code {dept_airport} not found!")
+        return
+
     if target_airports.empty:
-        print("No valid airports found!")
+        print("No valid target airports found!")
         return
 
     # Combine all airport points for the scatter geo plot
-    plot_data = pd.concat([nyc_airports, target_airports])
+    plot_data = pd.concat([dept_airport_data, target_airports])
     fig = px.scatter_geo(
         plot_data, lat="lat", lon="lon",
         text="name",
         hover_name="name",
-        title="Routes from NYC to Selected Airports",
+        title=f"Routes from {dept_airport} to Selected Airports",
         size_max=5,
-        opacity=0.6
+        opacity=0.6,
+        color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]
     )
 
-    # Draw a line from each NYC airport to each target airport
+    # Draw a line from the departure airport to each target airport
     for faa in faa_codes:
         target_airport = df[df["faa"] == faa]
         if not target_airport.empty:
-            for _, nyc_row in nyc_airports.iterrows():
-                # Create a small DataFrame with two rows: one for the NYC airport and one for the target airport.
-                line_data = pd.DataFrame([nyc_row, target_airport.iloc[0]])
-                fig.add_trace(px.line_geo(line_data, lat="lat", lon="lon").data[0])
+            # Create a small DataFrame with two rows: one for the departure airport and one for the target airport.
+            line_data = pd.DataFrame([dept_airport_data.iloc[0], target_airport.iloc[0]])
+            fig.add_trace(px.line_geo(line_data, lat="lat", lon="lon", line_dash_sequence=['solid'], color_discrete_sequence=[utils.COLOR_PALETTE["pakistan_green"]]).data[0])
+
+    # Autozoom to the selected routes with a bit less zoom
+    fig.update_geos(fitbounds="locations", visible=False)
+    
+    # Remove the box around the plot and use custom color palette
+    fig.update_layout(
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            projection_type='equirectangular',
+            showland=True,
+            showcountries=True,
+            showlakes=True,
+            lakecolor=utils.COLOR_PALETTE["light_green"],
+            landcolor=utils.COLOR_PALETTE["nyanza"],
+            projection_scale=1.2  # Adjust this value to control zoom
+        ),
+    )
+    
     return fig
 
 
 def main():
     """Test flight route functions."""
-    fig1 = plot_flight_route("LAX")
+    fig1 = plot_flight_route("JFK", "LAX")
     if fig1:
         fig1.show()
-    fig2 = plot_multiple_routes(["LAX", "ORD", "MIA"])
+    fig2 = plot_multiple_routes("JFK", ["LAX", "ORD", "MIA"])
     if fig2:
         fig2.show()
 

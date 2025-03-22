@@ -60,8 +60,8 @@ def analyze_correlations(df):
     """
     cols = ['year', 'air_time', 'distance', 'engines', 'seats']
     corr_matrix = df[cols].corr()
-    print("Correlation Matrix:")
-    print(corr_matrix)
+    # print("Correlation Matrix:")
+    # print(corr_matrix)
     
     # Create a custom colorscale using the palette:
     
