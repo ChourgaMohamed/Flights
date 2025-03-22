@@ -56,8 +56,6 @@ def analyze_wind_direction(conn=None):
     # Compute wind alignment as absolute difference between flight direction and wind direction
     df["wind_alignment"] = abs(df["flight_direction"] - df["wind_dir"])
     
-    print("Sample Wind Direction Analysis:")
-    print(df[["origin", "dest", "flight_direction", "wind_dir", "wind_alignment"]].head())
     return df
 
 def analyze_inner_product_and_airtime(conn=None):
@@ -85,15 +83,12 @@ def analyze_inner_product_and_airtime(conn=None):
     
     df = df.dropna(subset=["inner_product", "air_time"])
     
-    print("Sample Inner Product Analysis:")
-    print(df[["origin", "dest", "inner_product"]].head())
     
     # Relation between inner product and air_time
     df["inner_product_sign"] = np.sign(df["inner_product"])
     
     correlation = df[["inner_product", "air_time"]].corr()
-    print("Correlation between inner product and air_time:")
-    print(correlation)
+    
     
     # For plotting, select flights with highest positive and lowest negative inner product values
     highest_positive = df.nlargest(100, "inner_product")
