@@ -1,4 +1,5 @@
 altair==5.5.0
+-e .
 antiorm==1.2.1
 attrs==25.1.0
 blinker==1.9.0
@@ -67,4 +68,3 @@ tzdata==2025.1
 urllib3==2.3.0
 watchdog==6.0.0
 wheel==0.45.1
--e .

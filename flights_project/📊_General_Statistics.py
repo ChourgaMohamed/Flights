@@ -3,6 +3,11 @@ Streamlit dashboard for the Flights Project.
 Imports functions from Part 1 and Part 3 to display interactive visualizations.
 Uses a single database connection (opened once and passed to subfunctions).
 """
+import sys
+import os
+
+# Get the current directory and add the parent directory to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
 # Set page layout to wide
