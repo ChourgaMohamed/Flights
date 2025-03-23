@@ -17,20 +17,19 @@ def exploratory_analysis():
             lambda row: geodesic((jfk_lat, jfk_lon), (row["lat"], row["lon"])).km, axis=1
         )
 
-    light_green = utils.COLOR_PALETTE["light_green"]
-
     # Create scatter plot: Altitude vs. Distance from JFK using Plotly Express
     scatter_fig = px.scatter(
         df,
         x="geodesic_dist",
         y="alt",
         opacity=0.5,
-        color_discrete_sequence=[light_green],
+        color_discrete_sequence=[utils.COLOR_PALETTE["light_green"]],
         labels={
             "geodesic_dist": "Geodesic Distance from JFK (miles)",
             "alt": "Altitude (ft)"
         },
-        title="Exploring Altitude vs Distance from NYC"
+        title="Exploring Altitude vs Distance from NYC",
+        hover_data=["name"]
     )
 
     # Create histogram: Density of Airports by Latitude using Plotly Express
@@ -43,7 +42,8 @@ def exploratory_analysis():
             "count": "Number of Airports"
         },
         title="Density of Airports by Latitude",
-        color_discrete_sequence=[light_green]
+        color_discrete_sequence=[utils.COLOR_PALETTE["nyanza"],
+]
     )
 
     # Add outlines to the histogram bars

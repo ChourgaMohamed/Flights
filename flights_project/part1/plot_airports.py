@@ -34,6 +34,9 @@ def plot_airports():
         color=df["alt"],  # Color by altitude
         color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE
     )
+    
+    fig.update_geos(showframe=False)
+    
     return fig
 
 

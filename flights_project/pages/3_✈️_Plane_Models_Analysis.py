@@ -34,9 +34,6 @@ with col2:
 # Load full flight-plane dataset
 df = plane_type_analyses.get_plane_flight_data(conn=db_conn)
 
-# Correlation heatmap
-st.plotly_chart(plane_type_analyses.analyze_correlations(df))
-
 # 2x2 scatter plots
 st.plotly_chart(plane_type_analyses.plot_scatter_plots(df))
 

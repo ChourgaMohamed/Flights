@@ -44,6 +44,7 @@ with col1:
 
     # Show total flights as a metric
     st.metric("Total Flights from NYC (2023)", value=f"{total_flights:,}")  # add commas for readability
+    st.metric("Total Unique Destinations from NYC (2023)", value=len(airports_df))
     st.write("Flights per Airport:")
     flights_per_airport = flights_per_airport.rename(columns={"origin": "Airport", "num_flights": "Flights"})
 
@@ -67,43 +68,48 @@ with col2:
 
 # Route Statistics
 
-    st.subheader("Flight Statistics by Route")
-    if arr_airport != placeholder:
-        # Extract just the FAA code (e.g., "LAX" from "LAX - Los Angeles International")
-        arr_airport_code = arr_airport.split(" - ")[0]
-        
-        # Get flight statistics for the selected route
-        text, result = flight_statistics.get_flight_statistics(dep_airport, arr_airport_code, db_conn)
-        
-        # Convert the raw result (list of tuples/dicts) into a pandas DataFrame
-        # Here we assume your SQL query returns exactly one row of data. If it can return multiple rows,
-        # you can remove the [0] indexing or adjust accordingly.
-        df = pd.DataFrame(
-            result,
-            columns=[
-                "total_flights",
-                "avg_departure_delay",
-                "avg_air_time",
-                "avg_arrival_delay"
-            ]
-        )
-        
-        # Rename columns to more descriptive names
-        df = df.rename(columns={
-            "total_flights": "Total Flights",
-            "avg_departure_delay": "Avg Departure Delay (min)",
-            "avg_air_time": "Avg Air Time (min)",
-            "avg_arrival_delay": "Avg Arrival Delay (min)"
-        })
-        
-        st.write(text)  # "Flight statistics for JFK → LAX", for example
-        st.dataframe(df.set_index(df.columns[0]))
+st.subheader("Flight Statistics by Route")
+if arr_airport != placeholder:
+    # Extract just the FAA code (e.g., "LAX" from "LAX - Los Angeles International")
+    arr_airport_code = arr_airport.split(" - ")[0]
+    
+    # Get flight statistics for the selected route
+    text, result = flight_statistics.get_flight_statistics(dep_airport, arr_airport_code, db_conn)
+    
+    # Convert the raw result (list of tuples/dicts) into a pandas DataFrame
+    # Here we assume your SQL query returns exactly one row of data. If it can return multiple rows,
+    # you can remove the [0] indexing or adjust accordingly.
+    df = pd.DataFrame(
+        result,
+        columns=[
+            "total_flights",
+            "avg_departure_delay",
+            "avg_air_time",
+            "avg_arrival_delay"
+        ]
+    )
 
-        # Give the distance between the two airports, rounded to integer miles
-        distance = int(compute_distances.compute_distance(dep_airport, arr_airport_code))
-        st.write(f"Distance between {dep_airport} and {arr_airport}: {distance} miles")
-    else:
-        st.write("Please select a valid destination airport.")
+    # Round the specified columns to two decimals
+    df["avg_departure_delay"] = df["avg_departure_delay"].round(2)
+    df["avg_air_time"] = df["avg_air_time"].round(2)
+    df["avg_arrival_delay"] = df["avg_arrival_delay"].round(2)
+    
+    # Rename columns to more descriptive names
+    df = df.rename(columns={
+        "total_flights": "Total Flights",
+        "avg_departure_delay": "Avg Departure Delay (min)",
+        "avg_air_time": "Avg Air Time (min)",
+        "avg_arrival_delay": "Avg Arrival Delay (min)"
+    })
+    
+    st.write(text)  # "Flight statistics for JFK → LAX", for example
+    st.dataframe(df.set_index(df.columns[0]))
+
+    # Give the distance between the two airports, rounded to integer miles
+    distance = int(compute_distances.compute_distance(dep_airport, arr_airport_code))
+    st.write(f"Distance between {dep_airport} and {arr_airport}: {distance} miles")
+else:
+    st.write("Please select a valid destination airport.")
  
 if arr_airport != placeholder:
     faa_code = airport_options
