@@ -7,13 +7,9 @@ and inner product analysis between flight direction and wind speed.
 """
 import pandas as pd
 import numpy as np
-
 import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
-import seaborn as sns
 from flights_project import utils
 
 def calculate_flight_direction(dep_lat, dep_lon, arr_lat, arr_lon):
@@ -160,7 +156,7 @@ def create_improved_density_plot(df):
     Returns:
         plotly.graph_objects.Figure: Density plot figure
     """
-    # Create a temporary dataframe to filter outliers for each category
+    # Create a temporary dataframe to filter out outliers for each category
     temp_df = df.copy()
     
     # Filter out outliers for density plot
@@ -192,7 +188,7 @@ def create_improved_density_plot(df):
     fig = go.Figure()
     
     # Create histograms with density curves using Plotly's native functions
-    for condition, color in zip(["Headwind", "Tailwind"], ["red", "blue"]):
+    for condition, color in zip(["Headwind", "Tailwind"], [utils.COLOR_PALETTE["india_green"], utils.COLOR_PALETTE["light_green"] ]):
         condition_data = temp_df[temp_df["wind_condition"] == condition]["normalized_air_time"]
         
         # Add KDE curve using the figure_factory
@@ -218,7 +214,7 @@ def create_improved_density_plot(df):
                 name=condition,
                 line=dict(color=color, width=2),
                 fill='tozeroy',
-                fillcolor=f'rgba({255 if color == "red" else 0}, {0 if color == "red" else 0}, {255 if color == "blue" else 0}, 0.2)'
+                fillcolor=f'rgba{tuple(int(color.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (0.2,)}'
             )
         )
     
@@ -230,7 +226,7 @@ def create_improved_density_plot(df):
             x=[headwind_mean, headwind_mean],
             y=[0, y_max * 1.1],
             mode='lines',
-            line=dict(color="darkred", width=2, dash="dash"),
+            line=dict(color=utils.COLOR_PALETTE["india_green"], width=2, dash="dash"),
             name=f"Headwind Mean"
         )
     )
@@ -240,7 +236,7 @@ def create_improved_density_plot(df):
             x=[tailwind_mean, tailwind_mean],
             y=[0, y_max * 1.1],
             mode='lines',
-            line=dict(color="darkblue", width=2, dash="dash"),
+            line=dict(color=utils.COLOR_PALETTE["light_green"], width=2, dash="dash"),
             name=f"Tailwind Mean"
         )
     )
@@ -304,10 +300,10 @@ def create_box_plot(df):
                 color="wind_condition", 
                 title="Normalized Air Time by Wind Condition",
                 labels={"wind_condition": "Wind Condition", "normalized_air_time": "Air Time (min per 100 miles)"},
-                color_discrete_map={"Headwind": "red", "Tailwind": "blue"})
+                color_discrete_map={"Headwind": utils.COLOR_PALETTE["india_green"], "Tailwind": utils.COLOR_PALETTE["light_green"]})
     
     # Add mean points
-    for condition, color in zip(["Headwind", "Tailwind"], ["red", "blue"]):
+    for condition, color in zip(["Headwind", "Tailwind"], [utils.COLOR_PALETTE["india_green"], utils.COLOR_PALETTE["light_green"] ]):
         mean_val = filtered_df[filtered_df["wind_condition"] == condition]["normalized_air_time"].mean()
         fig.add_trace(
             go.Scatter(
@@ -385,10 +381,10 @@ def create_scatter_plot(df, sample_size=800):
                     trendline="ols",
                     title="Inner Product vs Normalized Air Time",
                     labels={"inner_product": "Inner Product", "normalized_air_time": "Air Time (min per 100 miles)"},
-                    color_discrete_map={"Headwind": "red", "Tailwind": "blue"})
+                    color_discrete_map={"Headwind": utils.COLOR_PALETTE["india_green"], "Tailwind": utils.COLOR_PALETTE["light_green"]})
     
     # Add mean points for each condition
-    for condition, color in zip(["Headwind", "Tailwind"], ["red", "blue"]):
+    for condition, color in zip(["Headwind", "Tailwind"], [utils.COLOR_PALETTE["india_green"], utils.COLOR_PALETTE["light_green"] ]):
         condition_df = sampled_df[sampled_df["wind_condition"] == condition]
         mean_x = condition_df["inner_product"].mean()
         mean_y = condition_df["normalized_air_time"].mean()

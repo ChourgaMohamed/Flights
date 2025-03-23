@@ -1,5 +1,5 @@
 import streamlit as st
-from part3 import flight_statistics, flight_analysis
+from part3 import flight_statistics3, flight_analysis
 from db import get_db_connection
 import pandas as pd
 from features import geo_heatmap
@@ -21,7 +21,6 @@ end_date = st.sidebar.date_input("End date", value=pd.to_datetime("2023-12-31"))
 start_date_str = start_date.strftime("%Y-%m-%d")
 end_date_str = end_date.strftime("%Y-%m-%d")
 
-st.title("Flight Statistics")
 st.subheader("Geo Heatmap of Flights")
 
 if dep_airport != "All Airports":
@@ -42,7 +41,7 @@ if dep_airport != "All Airports":
 else:
     dep_airport_code = ["JFK", "LGA", "EWR"]
 
-stats_df = flight_statistics.get_flight_statistics(dep_airport_code, start_date_str, end_date_str, conn=db_conn)
+stats_df = flight_statistics3.get_flight_statistics(dep_airport_code, start_date_str, end_date_str, conn=db_conn)
 
 # Rewrite the column names
 stats_df = stats_df.rename(columns={

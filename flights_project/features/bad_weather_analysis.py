@@ -1,10 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import pearsonr  # New import for correlation testing
-
-# If you don't have a custom utils module, replace with sqlite3.connect("path_to_db.sqlite")
+from scipy.stats import pearsonr
 from flights_project import utils
+import numpy as np
+import plotly.express as px
 
 def bad_weather_analysis(conn=None):
     """
@@ -14,10 +13,8 @@ def bad_weather_analysis(conn=None):
       - A boxplot comparing delays under 'bad weather' vs. normal conditions.
       - The correlation coefficient (with p-value) between bad weather and arrival delay.
     """
-
     # -------------------------------------------------------------------------
     # 1. Query flights + weather
-    #    (Adjust this query to match your schema or if you have a cancellations column)
     # -------------------------------------------------------------------------
     query = """
     SELECT
@@ -26,7 +23,6 @@ def bad_weather_analysis(conn=None):
         f.dep_delay,
         f.arr_delay,
         f.air_time,
-        -- f.cancelled,  -- Uncomment if you actually have a 'cancelled' column
         w.wind_speed,
         w.wind_dir,
         w.precip,
@@ -58,7 +54,6 @@ def bad_weather_analysis(conn=None):
     # -------------------------------------------------------------------------
     # 2. "bad weather" indicator
     # -------------------------------------------------------------------------
-    # Based of observed histograms and research, we'll define "bad weather" as:
     df["bad_weather"] = (
         (df["precip"] > 0.05) |
         (df["visib"] < 10)    |
@@ -69,7 +64,6 @@ def bad_weather_analysis(conn=None):
 
     # -------------------------------------------------------------------------
     # 3. Correlation Analysis
-    #    We'll look at correlations among flight delays, air_time, weather vars
     # -------------------------------------------------------------------------
     corr_vars = [
         "dep_delay", 
@@ -85,7 +79,6 @@ def bad_weather_analysis(conn=None):
         "bad_weather",
         "wind_gust",
     ]
-
     # Keep only columns that actually exist in the DataFrame
     corr_vars = [v for v in corr_vars if v in df.columns]
     
@@ -93,7 +86,7 @@ def bad_weather_analysis(conn=None):
     corr_df = df[corr_vars].dropna()
     
     # Compute correlation matrix
-    correlation_matrix = corr_df.corr()
+    correlation_matrix = corr_df.corr().round(2)
 
     print("\n=== Correlation Matrix (Delays, Flight Time, Weather, Bad Weather) ===")
     print(correlation_matrix, "\n")
@@ -101,48 +94,72 @@ def bad_weather_analysis(conn=None):
     # -------------------------------------------------------------------------
     # 3a. Correlation between Bad Weather and Arrival Delay (with p-value)
     # -------------------------------------------------------------------------
-    # Drop missing values for the two specific columns
     sub_df = df[['bad_weather', 'arr_delay']].dropna()
     corr_value, p_value = pearsonr(sub_df['bad_weather'], sub_df['arr_delay'])
     print("=== Bad Weather vs. Arrival Delay ===")
-    print(f"Correlation coefficient: {corr_value:.2f}")
-    print(f"P-value: {p_value:.3f}\n")
+    text1 = (f"Correlation coefficient: {corr_value:.2f}")
+    text2 = (f"P-value: {p_value:.3f}\n")
+    print(text1)
+    print(text2)
 
     # -------------------------------------------------------------------------
     # 4. Visualization
-    #    a) Correlation Heatmap
+    #    a) Correlation Heatmap (only bottom triangle)
     #    b) Boxplot for Delays under bad vs. not-bad weather
     # -------------------------------------------------------------------------
     
-    # (a) Correlation Heatmap
-    fig1 = plt.figure(figsize=(10, 8))
-    sns.heatmap(
-        correlation_matrix, 
-        annot=True, 
-        fmt=".2f", 
-        cmap="coolwarm", 
-        square=True,
-        cbar_kws={"shrink": 0.8}
-    )
-    plt.title("Correlation Heatmap: Flight & Weather Variables")
-    plt.tight_layout()
+    # (a) Correlation Heatmap with nicer labels
+    rename_dict = {
+        "dep_delay":   "Departure Delay",
+        "arr_delay":   "Arrival Delay",
+        "air_time":    "Flight Time",
+        "wind_speed":  "Wind Speed",
+        "wind_dir":    "Wind Direction",
+        "precip":      "Precipitation",
+        "visib":       "Visibility",
+        "temp":        "Temperature",
+        "pressure":    "Pressure",
+        "humid":       "Humidity",
+        "bad_weather": "Bad Weather",
+        "wind_gust":   "Wind Gust"
+    }
     
+    # Rename rows/columns in the correlation matrix
+    corr_renamed = correlation_matrix.rename(index=rename_dict, columns=rename_dict)
+    
+    # Create a mask for the upper triangle (excluding the diagonal)
+    mask = np.triu(np.ones(corr_renamed.shape, dtype=bool), k=1)
+    # Mask the correlation matrix so only the lower triangle is shown
+    corr_lower = corr_renamed.mask(mask)
+
+    fig1 = px.imshow(
+        corr_lower,
+        text_auto=True,
+        aspect="auto",
+        color_continuous_scale=utils.CUSTOM_PLOTLY_COLOR_SCALE,
+        range_color=(-1, 1),  # Ensures a consistent scale from -1 to +1
+        title="Correlation Heatmap: Flight & Weather Variables (Bottom Triangle)",
+    )
+    # Move x-axis labels to the top and add a colorbar title
+    fig1.update_layout(
+        coloraxis_colorbar=dict(title="Correlation"),
+    )
 
     # (b) Boxplot: Compare arrival delay under bad vs. not-bad weather
-    fig2 = plt.figure(figsize=(6, 5))
-    sns.boxplot(
-        x="bad_weather", 
-        y="arr_delay", 
-        data=df, 
-        palette="Set2",
-        showfliers=False
+    fig2 = px.box(
+        df,
+        x="bad_weather",
+        y="arr_delay",
+        title="Arrival Delay vs. Bad Weather Indicator",
+        labels={"bad_weather": "Bad Weather (1 = Yes, 0 = No)", "arr_delay": "Arrival Delay (minutes)"},
+        category_orders={"bad_weather": [0, 1]},
+        range_y=[-100, 100],
+        points=False,  # Hide outliers
+        color_discrete_sequence=[utils.COLOR_PALETTE["india_green"]]
     )
-    plt.title("Arrival Delay vs. Bad Weather Indicator")
-    plt.xlabel("Bad Weather (1 = Yes, 0 = No)")
-    plt.ylabel("Arrival Delay (minutes)")
     
+    return df, fig1, fig2, text1, text2
 
-    return df, fig1, fig2
 
 def main():
     """

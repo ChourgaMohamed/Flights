@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind, mannwhitneyu
 
-# Replace this import with your actual DB connection method if needed
 from flights_project import utils
 
 def normalize_angle_diff(angle_diff):

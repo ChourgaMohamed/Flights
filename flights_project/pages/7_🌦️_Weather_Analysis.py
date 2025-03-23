@@ -1,4 +1,5 @@
 import streamlit as st
+from features import bad_weather_analysis
 from part3.weather_analysis import ( analyze_inner_product_and_airtime,
     prepare_data, create_improved_density_plot, create_box_plot, 
     create_scatter_plot, calculate_statistics, get_conclusion_text
@@ -8,7 +9,8 @@ from db import get_db_connection
 
 # Database connection and data retrieval
 db_conn = get_db_connection()
-st.title("Wind and Flight Time Analysis")
+
+# Page title
 st.subheader("Relationship between wind effect and air time")
 
 # Run the analysis and get the data
@@ -43,6 +45,19 @@ correlation_text, conclusion = get_conclusion_text(correlation, headwind_mean, t
 st.subheader("Conclusion")
 st.write(f"**{correlation_text}**")
 st.write(conclusion)
+
+st.subheader("Bad weather conditions")
+# Get the bad weather data
+df, fig1, fig2, text1, text2 = bad_weather_analysis.bad_weather_analysis(conn=db_conn)
+
+# Display the data
+st.plotly_chart(fig1)
+st.write("Overall, departure and arrival delays show moderate correlation with each other, while weather factors exhibit weak relationships with flight delays, indicating minimal impact of weather on overall flight timing.")
+
+st.plotly_chart(fig2)
+
+st.text(text1 + "\n" + text2)
+st.write("Bad weather shows a statistically significant but minimal impact on arrival delays, suggesting only a slight increase in delays when weather is bad.")
 
 # Footer
 st.sidebar.markdown('''

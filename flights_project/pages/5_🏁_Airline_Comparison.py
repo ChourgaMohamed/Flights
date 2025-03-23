@@ -4,8 +4,6 @@ from db import get_db_connection
 
 db_conn = get_db_connection()
 
-st.title("Airline Comparison")
-
 all_carriers = airline_comparison.get_all_carriers(conn=db_conn)
 selected_carriers = st.multiselect(
     "Select carriers to display",

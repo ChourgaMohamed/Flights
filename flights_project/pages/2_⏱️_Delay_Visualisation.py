@@ -6,7 +6,6 @@ import pandas as pd
 
 db_conn = get_db_connection()
 
-st.title("Delay analysis")
 st.subheader("Departure delays in 2023")
 
 # Sidebar for date range selection

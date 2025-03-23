@@ -96,15 +96,131 @@ def plot_day_delay(day="2023-01-01", conn=None):
        tickvals=pd.date_range("00:00", "23:59", freq="1H").time
      )
    return fig
-   
+
+def delay_dataframe(conn=None):
+    """
+    Gets all the flights with departure delays in chunks of an hour.
+    Intended for visualizing departure delays against weather.
+    - Every row corresponds to an hour of a specific day (including year, month, day).
+    - Includes weather metrics: wind direction, wind speed, precipitation, visibility,
+      temperature, pressure, wind gust, and humidity.
+    - Returns a DataFrame with the data aggregated per hour, per date.
+    - Computes the average delay per hour.
+    """
+    query = """
+    SELECT 
+        f.year,
+        f.month,
+        f.day,
+        f.sched_dep_time,
+        f.dep_delay,
+        w.wind_dir,
+        w.wind_speed,
+        w.precip,
+        w.visib,
+        w.temp,
+        w.pressure,
+        w.wind_gust,
+        w.humid
+    FROM flights f
+    LEFT JOIN weather w
+        ON f.origin = w.origin
+        AND f.year = w.year
+        AND f.month = w.month
+        AND f.day = w.day
+        AND f.hour = w.hour
+    WHERE w.wind_speed IS NOT NULL
+      AND w.wind_dir IS NOT NULL
+      AND w.precip IS NOT NULL
+      AND w.visib IS NOT NULL
+      AND w.temp IS NOT NULL
+      AND w.pressure IS NOT NULL
+      AND w.wind_gust IS NOT NULL
+      AND w.humid IS NOT NULL
+    """
+    if conn is None:
+        with utils.get_db_connection() as c:
+            df = pd.read_sql(query, c)
+    else:
+        df = pd.read_sql(query, conn)
+    
+    # Convert sched_dep_time to an hour integer (assuming HHMM format).
+    df['hour'] = df['sched_dep_time'].apply(lambda x: int(str(x).zfill(4)[:2]))
+    
+    # Create a datetime column from year, month, day, and hour.
+    df['datetime'] = pd.to_datetime(dict(year=df['year'], month=df['month'], day=df['day'])) \
+                     + pd.to_timedelta(df['hour'], unit='h')
+    
+    # Group by the full datetime.
+    agg_funcs = {
+        'dep_delay': 'mean',
+        'wind_dir': 'mean',
+        'wind_speed': 'mean',
+        'precip': 'mean',
+        'visib': 'mean',
+        'temp': 'mean',
+        'pressure': 'mean',
+        'wind_gust': 'mean',
+        'humid': 'mean'
+    }
+    
+    df_hourly = df.groupby('datetime').agg(agg_funcs).reset_index()
+    
+    # Rename columns for clarity.
+    df_hourly.rename(columns={'dep_delay': 'avg_dep_delay'}, inplace=True)
+    
+    return df_hourly
+
+
+def plot_delay(conn=None):
+    """
+    Plots a line chart with the average departure delay and weather metrics per hour,
+    over the full timeline (day by day).
+    
+    This function:
+      - Retrieves the hourly aggregated data using delay_dataframe().
+      - Converts the wide-form DataFrame to a long-form DataFrame for easier plotting with Plotly Express.
+      - Creates a line chart where each metric is plotted against the full datetime range.
+    """
+    df_hourly = delay_dataframe(conn)
+    
+    # Melt to long format
+    df_melt = df_hourly.melt(
+        id_vars=["datetime"],
+        var_name="Metric",
+        value_name="Value"
+    )
+    
+    # Create a line plot using Plotly Express
+    fig = px.line(
+        df_melt,
+        x="datetime",
+        y="Value",
+        color="Metric",
+        markers=True,
+        title="Hourly Metrics Over Time: Avg Departure Delay & Weather"
+    )
+    
+    fig.update_layout(
+        xaxis_title="Date and Hour",
+        yaxis_title="Value",
+        legend_title="Metric",
+        hovermode="x unified"
+    )
+    
+    return fig
+
 
 def main():
     # Opening a persistent connection
     conn = utils.get_persistent_db_connection()
 
     """Run delay analysis (opens its own DB connection if none provided)."""
-    fig = plot_delay_histogram(conn=conn)
-    fig.show()
+    # fig = plot_delay_histogram(conn=conn)
+    # fig.show()
+
+    fig1 = plot_delay(conn=conn)
+    fig1.show()
 
 if __name__ == "__main__":
     main()
